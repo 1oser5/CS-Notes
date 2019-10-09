@@ -77,3 +77,5 @@ SIMD 计算机包括多个独立的处理器，每个都有自己的局部内存
 
 ![avator](../pic/Cache_Coherency_Generic.png)
 
+
+1
