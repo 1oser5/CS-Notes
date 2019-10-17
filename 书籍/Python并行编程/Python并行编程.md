@@ -514,3 +514,86 @@ Python 多进程模块提供了一个在所有用户之间管理共享对信息�
 + apply_async()：是 apply（）方法的一个变体，返回一个 result 对象。其实一个异步操作，在子进程执行之前不会锁住主进程。
 + map（）：内置的 map（）函数的并行版，将每一个可执行的数据作为进程池中的一个任务。
 + map_async（）：是 map（）方法的变体，也是异步的，返回一个result 对象，如果指定了回调函数，回调函数应该是 callable 的，并且只接受一个参数。当 result 准备好之后会自动调用回调函数。
+
+
+# 异步编程
+
+除了顺序执行和并行执行，还有第三种执行方式，异步执行，这是事件驱动模型的基础。
+
+在并发执行的异步模型中，许多任务穿插在同一时间线上，所有任务都有一个控制流执行（单线程），任务可能被暂停或恢复，中间这短时间线程会执行其他任务。
+
+![avator](../../pic/asynchronous-programming-model.png)
+
+异步编程和多线程不同的是，多线程是由操作系统决定何时挂起某个活动或恢复某个活动的，而异步并发模型中，程序员必须假设线程在何时都有可能被挂起或者执行。
+
+## 使用 Python concurrent.futures 模块
+
+Python 3.2 带来了 concurrent.futures 模块，该模块具有线程池、进程池、管理并行编程任务、确定非确定性的执行流程、进程/线程同步功能。
+
+该模块以下部分组成：
+
++ concurrent.futures.Executor：这是一个虚拟基类，提供异步执行的方法。
++ submit（function，argument）：调度函数（可调用对象）的执行，将 argument 作为参数传入，
++ map（function，argument）：将 arg 作为参数执行函数，以 异步 方式。
++ shutdown（Wait = True）：发出让执行者释放所有资源的信号。
++ concurrent.futures.Future：包括函数的异步执行。Future对象是 submit 任务到 executor 的实例。
+
+Executor 是抽象类，可以通过子类访问，比如 executorPools，因此线程和进程是依赖资源的任务，所以最好使用池将他们组织在一起。
+
+## 使用线程池和进程池
+
+进程池和线程池出现优化/简化了程序进程和线程的调用。通过池，可以将任务给 executor 调用。池分为两部分，一部分是待执行的任务，另一部分是一系列的进程和线程。使用进程池的主要目的是在于重用，让进程或线程在生命周期内被多次调用。其减少了创建线程和进程的开销，提高了程序的性能。重用虽然不是规定的，但是它是池出现的主要原因。
+
+![avator](../../pic/pooling-management.png)
+
+
+current.Futures 提供了两个类分别操作线程池和进程池，这两类分别是：
+
+concurrent.futures.ThreadPoolExecutor(max_workers)
+concurrent.futures.ProcessPoolExecutor(max_workers)
+
+max_workers 表示最多有多少个 worker 并行执行任务。
+
+
+## 使用 Asyncio 管理事件循环
+
+Python 的 Asyncio 模块提供了管理事件、协程、任务和线程的方法，以及编写并发代码的原语。
+
+此概念主要包括：
+
++ 事件循环：在 Asyncio 模块中，一个进程就是一个事件循环。
++ 协程：子程序的泛化概念，可以在执行期间暂停，等待外部的处理，再从暂停处恢复执行。
++ Futures：表示未完成的计算。
++ Tasks：Asyncio 的子类，用于封装和管理并行模式下的协程。
+
+
+Asyncio 提供了以下方法来管理事件循环：
+
++  loop = get_event_loop()：得到上下文的事件循环。
++  loop.call_later(time_delay, callback, argument)：延后 time_delay 秒执行 callback 方法。
++  loo.call_soon（callback, argument)：尽快调用 callback 方法，call_soon（）函数结束，主线程回到事件循环之后会马上调用 callback。
++  loop_time：以 float 形式返回当前时间循环的内部时间。
++  asyncio_set_event_loop()：为当期上下文设置事件循环。
++  asyncio_new_event_loop()：在此策略创建一个新的时间循环并返回。
++  loop.run_forever()：在调用 stop（）之前一直运行。
+
+
+## 使用 Asyncio 管理协程
+
+当一个程序变得巨大而复杂时，我们通常使用子程序来进行任务的分隔。子程序不能单独进行，需要在主程序的请求在执行，主程序负责调度各个子程序。协程就是子程序的泛化，和子程序不同的时，协程每天主程序来调度，这是因为协程通过管道连接在一起，没有监视函数负责调用它们，在协程中，执行点可以被挂起，可以从被挂起点继续执行。通过协程池可以插入运算，开始第一个任务，直到 yield返回，然后运行下一个，上文提到的事件循环就是插入的控制组件，它持续追踪所有协程并执行它们。
+
+协程有一些其他的特性：
+
++ 协程可以有多个入口点，并且可以 yield 多次；
++ 协程可以将执行权交给其它协程；
+
+使用 aysncio 定义协程非常简单，只需要一个装饰器即可：
+
+```python
+import asyncio
+
+@asyncio.coroutine
+def coroutine_function(function_arguments):
+    #DO_SOMETHING
+```
+
