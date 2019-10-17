@@ -371,13 +371,13 @@ RLock（Reentrant Lock）就是可以获取多次的锁，也叫做递归锁。�
 
 Python对条件同步的管理很有趣，如果没有已经存在的锁传递给构造器的话，内部的 _Condition 会创建一个 RLock（）对象
 
-![avator](../../../../pic/Snipaste_2019-10-14_10-49-01.png)
+![avator](../../pic/Snipaste_2019-10-14_10-49-01.png)
 
 # 使用事件进行线程同步
 
 事件是线程之间用于通信的对象。有的线程等待信号，有点线程发出信号。基本上事件对象会维护一个变量。使用 set（）时将变量设置为 ture，使用clear（）时将变量设置为 false。wait（）方法会阻塞线程，直至他变为 true。
 
-![avator](../../../../pic/event.png)
+![avator](../../pic/event.png)
 
 
 # 使用with语法
@@ -478,7 +478,7 @@ Queue 返回一个共享的队列，是线程安全也是进程安全的。可�
 
   一个管道可以做以下事情：
 
-  + 返回一堆被管道连接的连接对象
+  + 返回一对被管道连接的连接对象
   + 使用 send/receive 进行线程通信
 
 ## 进程如何同步
@@ -550,6 +550,7 @@ Executor 是抽象类，可以通过子类访问，比如 executorPools，因此
 current.Futures 提供了两个类分别操作线程池和进程池，这两类分别是：
 
 concurrent.futures.ThreadPoolExecutor(max_workers)
+
 concurrent.futures.ProcessPoolExecutor(max_workers)
 
 max_workers 表示最多有多少个 worker 并行执行任务。

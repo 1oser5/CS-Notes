@@ -12,12 +12,18 @@
 
 # here put the import lib
 import multiprocessing
+import time
 def fun(a):
     return a*a
 if __name__ == '__main__':
     l = list(range(100))
+    start_time = time.time()
     pool = multiprocessing.Pool(processes=4)
     o = pool.map(fun,l)
     pool.close()
     pool.join()
+    print("pool use time",time.time() - start_time)
+    start_time = time.time()
+    s = map(fun,l)
+    print("normal use time",time.time() - start_time)
     print("pool:",o)
