@@ -3,7 +3,7 @@
 
 # Python
 + [Python常见问题](./Python/Python常见问题)
-
++ [Jenkins](./Python/Jenkins)
 
 # 💻 操作系统
 ## 计算机操作系统
