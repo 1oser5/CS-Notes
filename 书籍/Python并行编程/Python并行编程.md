@@ -598,3 +598,99 @@ def coroutine_function(function_arguments):
     #DO_SOMETHING
 ```
 
+## 使用 Asyncio 控制任务
+Asyncio 是用来处理事件循环和并发任务执行的。其提供了 asyncio.Task（）类，可以在任务中使用协程。其目的是在同一事件循环中，在执行一个任务的同时可以并发执行其他任务。当任务被包裹在协程中时，他就可以将任务和事件循环连接起来。当事件循环启动时，任务自动运行，这样可以实现一个自启动协程机制。
+
+## 使用 Asyncio 和 Futures
+
+asyncio 另一个重要类是 Future，他和 concurrent.futures.Future 很像，但是针对异步的事件循环做了处理。
+
+要操作 Future 需要进行以下声明
+
+```python
+import asyncio
+future = asyncio.Future()
+```
+
++ cancel（）：取消 Future 执行，调度回调函数。
++ result（）：获得 future 代表的结果。
++ exception（）：获得 future 中的 Exception。
++ add_done_callback（fn）：添加一个回调函数，当 future 执行完毕之后就会调用该函数。
++ remove_done_callback（fn）：从 call when done 列表中移除所有 callback 实例。
++ set_result（result）：将 future 设为完成，并设置 result
++ set_exception(exception)：将 future 设为完成，并设置 exception。
+
+
+# 分布式 Python 编程
+
+## 介绍
+分布式的思想就是将大任务转化为一个个小任务，交给分布式网络中的计算机去完成。在分布式环境中，必须保证计算机的可用性，需要可以持续监控的框架。
+
+采用这种技术的根本问题在于对于流量（指令，数据，任务等）进行适当的分配。有一个分布式系统基础特征产生的问题：网络由不同操作系统的计算机组成，可能相互不兼容。所以框架需要解决为不同处理器提供合作的描述方法。
+
+## 使用 Celery 实现分布式任务
+
+celery 是一个用来管理分布式任务的 Python 框架。其遵循面向对象的原理。它的主要 Future 是将许多小任务分布到一个大型的计算机集群中，最后将任务的结果收集起来，组成整体的解决方案。
+
+使用 celery 需要以下组件：
++  celery 模块
++  一个信息代理（Message Broker）：这是一个独立于 celery 的中间件。用来和分布式 worker 收发消息。它会处理网络通信中的信息交换。不再是点对点的，而是面向消息的方式，最著名的是 发布者/订阅者 模式。
+
+![avator](../../pic/celery-diagram.png)
+
+使用 RabbitMQ 来做信息代理，这是一个面向信息的中间件，实现了 高级信息队列协议（AMQP）。RabbitMQ 是基于 Erlang 写的。基于 Open Telecom Platform（OPT）框架来管理集群和故障转移。
+
+## 使用 celery 创建任务
+
+使用 celery 创建任务可以调用以下函数：
+
++ apply_async（args[,kwargs[, ...]]）：发送一个任务信息。
++ delay（*args, **kwargs）：发送一个任务信息的快捷方式，但不支持设置一些执行信息。
+
+delay 调用起来更为方便，它可以像函数一样写
+
+```python
+task.delay(arg1, arg2, kwarg1 ='x', kwarg2 = 'y' )
+```
+
+要使用 apply_async 需要这样写
+
+```python
+task.apply_async(args = [arg1, arg 2], kwargs = {'kwarg1':'x','kwarg2':'y'})
+```
+
+
+
+## 使用 SCOOP 进行科学计算
+Scalable Concurrent Operations in Python(SCOOP) 是一个可扩展的 Python 并行计算库，可以将并行任务放到各种各样的计算节点上计算。其基于 ØMQ 框架，提供了一种在分布式系统中管理 Futures 的方法。主要应用场景是科学计算，尽可能利用所有的计算资源来执行大量的分布式任务。
+
+![avator](../../pic/SCOOP.png)
+
+该系统的通讯中心是 broker，broker 和所有节点通讯，在他们之间传递信息呢。 Future 在各节点被创建，而不是由 broker 创建，这种方案是的拓扑结构更加可靠，性能高。 broker占用的主要资源是 I/O，CPU 使用很小。
+
+
+## 通过 SCOOP 使用 map 函数
+
+SCOOP 准备了多个 map 函数将异步计算下发到多个运算节点：
+
++ futures.map（func, iterables, kargs）：返回一个生成器，按照输入顺序遍历结果，是 map 函数的一个并行执行版本。
++ futures.map_as_completed（func, iterables, kargs）：每当有结果，就 yield 出来。
++ funtures.scoop.futures.mapReduce（mapFunc, reductionOp, iterables, kargs）：map 函数执行后可以通过此函数执行 reduction 函数，返回的结果是一个元素。
+
+
+## 使用 Pyro4 进行远程方法调用
+
+Python Remote Objects（Pyro4）实现了类似于 java 的远程方法调用（Remote Method Invocation, RMI）。可以从另一个进程甚至另一台机器调用远程对象，就像调用本地对象一样。
+
+从概念角度讲，RMI 技术可以追溯到远程过程调用（remote procedure call,RPC）。RMI 是 RPC 针对面向对象范式进行改造 -- 方法替换过程。在面向对象系统中，远程方法调用使用这样一种机制使得项目在统一性和对称性上有很多优势，能复用不同方法或者对象之间的模型。
+
+![avator](../../pic/RMI.png)
+
+从图中看书 ，Pyro4 用 客户端/服务端的方式来管理和分发对象。Pyro4 可以将客户端转化为远程对象调用。在调用中有两个重要角色，一个是客户端，一个是服务客户端的服务器，Pyro4 以分布式的形式提供这种服务。
+
+## 使用 Pyro4 链接对象
+
+展示使用 Pyro4 创建的互相调用的对象链来实现以下的分布式框架
+
+![avator](../../pic/chainning.png)
+
