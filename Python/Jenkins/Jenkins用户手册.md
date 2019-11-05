@@ -394,3 +394,48 @@ node {
 
 使用 build 语法的好处是后续的流水线操作可以调用其返回值。
 
+
+
+尝试了示例代码中，使用多分支创建任务，可以做到不同的分支使用不同的 jenkinsfile 进行控制。
+
+
+在进行 git 绑定的时候遇到了以下问题
+
+![avator](../../pic/link-git.png)
+
+发现仓库 url 只能使用线上地址
+
+然后 user credentials 需要在 credentials 中添加。
+
+上述问题我开始以为是 docker配置问题出现的，所以在我的 mac 上本地运行的。
+
+现在回到 docker 环境，发现现在无法登陆了，点击登录输入账密之后出现如下：
+
+![avator](../../pic/jenkins-login-error.png)
+
+感觉应该是我之前修改过 jenkins 用户配置文件造成的，重启镜像也无法解决该问题。
+
+发现是之前修改配置文件为可以匿名登录后，再在权限设置里修改为匿名用户只有读权限之后就会报错。。。
+
+
+尝试过删除镜像来重置 jenkins 配置，但是无效，原因是在新建 jenkins 时，是挂载到本地的
+```python
+docker run 
+--rm 
+-u root 
+-p 8080:8080 
+-v jenkins-data:/var/jenkins_home 
+# 下面这一行
+-v /var/run/docker.sock:/var/run/docker.sock
+-v "%HOMEPATH%"/home:/home jenkins
+```
+docker for mac 本地镜像存储位置：（/Users/{YourUserName} 可以使用 ~ 代替）
+```
+/Users/{YourUserName}/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/Docker.qcow2
+```
+
+再删除本地镜像之后在重启 docker服务。重新跑jenkins，发现之前的配置还在。
+
+之前删除的 docker.sock 文件又回来了。
+
+这个问题暂时还未解决，但是我个人对要把是否 要把 jenkins 放入 docker 产生了疑惑。按照我目前对于 docker 的了解情况来看， docker 是一个容器，但是按照 leader 说要公司是有不同的服务器的，而且看来不同服务器上的业务逻辑也不同，所以把 jinkens 放到 docker中可能不是必要的，这要等我下午在进行调研。
