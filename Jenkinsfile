@@ -1,7 +1,8 @@
-pipeline{
-    stages{
-        stages('Build'){
-            steps{
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
                 sh 'echo "Hello World"'
             }
         }
