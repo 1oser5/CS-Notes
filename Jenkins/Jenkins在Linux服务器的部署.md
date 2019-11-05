@@ -50,11 +50,9 @@ sudo yum install jenkins
 如果不是 root 用户，下面所有命令加上 sudo 即可
 
 ```shell
-[root@localhost ~]# mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
 
 ```
-2.下载 aliyun 的镜像版本
-
 
 
 查看 Centos 版本
@@ -63,8 +61,11 @@ sudo yum install jenkins
 cat /etc/redhat-release
 ```
 
+2.下载 对应的 aliyun 镜像版本
+
+
 ```shell
-[root@localhost ~]# wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 
 ```
 
@@ -86,7 +87,7 @@ yum -y update
 ```
 service jenkins start
 ```
-![avator](../../pic/start-jenkins.png)
+![avator](../pic/start-jenkins.png)
 
 其默认端口为 8080，默认用户为 jenkins
 
@@ -119,6 +120,6 @@ firewall-cmd –zone=public –add-port=8080/tcp –permanent
 
 修改后输入地址可以看到 jenkins 正常启动
 
-![avator](../../pic/join-jenkins.png)
+![avator](../pic/join-jenkins.png)
 
 基本部署完成。
