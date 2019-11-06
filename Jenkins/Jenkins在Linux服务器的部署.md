@@ -204,3 +204,30 @@ webhook 是通知 Jenkins 时的请求地址，用来写在 GitHub 上，GitHub 
 ![avator](../pic/test-conn.jpeg)
 
 6.点击页面最底部的"保存"按钮
+
+
+昨天配置 jenkins 的 webhook 失败了。今天继续尝试。发现服务器上的 jenkins 服务中断了。
+
+重启服务器发现返回的是 ok，但是外网仍然无法访问。
+
+使用 curl 语句发现 
+
+```
+Failed connect to localhost:8080; 拒绝连接
+```
+
+8080 端口拒绝了连接。
+
+重启 jenkins
+```
+service jenkins restart
+```
+
+停止 jenkins
+```
+service jenkins stop
+```
+
+重启服务后，问题解决。
+
+好像是因为我这个 ip 地址是内网的，需要进行配置
