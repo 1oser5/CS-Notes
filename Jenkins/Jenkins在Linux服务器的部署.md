@@ -275,3 +275,42 @@ curl ifconfig.me
 
 
 
+进行简单的流水线构建之后，运行结果
+
+```
+Started by user tianle xia
+
+Running as SYSTEM
+
+Building in workspace /var/lib/jenkins/workspace/CS-NOTE
+
+No credentials specified
+
+ > git rev-parse --is-inside-work-tree # timeout=10
+
+Fetching changes from the remote Git repository
+
+ > git config remote.origin.url https://github.com/1oser5/CS-Notes.git # timeout=10
+
+Fetching upstream changes from https://github.com/1oser5/CS-Notes.git
+
+ > git --version # timeout=10
+
+ > git fetch --tags --progress https://github.com/1oser5/CS-Notes.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+```
+
+一直卡死在最后一波，10分钟之后流水线自动停止。
+
+可能有两个问题：
+
+1.git权限
+
+2.磁盘空间不足
+
+现在尝试在 mac 上运行
+
+超时的原因好像就是因为 CS-NOTE 这个项目太大了，系统默认的 10分钟还 clone 不完，其他小型项目都可以正常构建。
+
+然后关于 webhook，证实了需要内网穿透之后才能实现更新后自动构建。
+
+gitlab 的问题放置到明天，首先解决文件如果过大，不能正常 clone 的问题。
