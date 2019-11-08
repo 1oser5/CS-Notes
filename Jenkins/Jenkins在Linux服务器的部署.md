@@ -314,3 +314,14 @@ Fetching upstream changes from https://github.com/1oser5/CS-Notes.git
 然后关于 webhook，证实了需要内网穿透之后才能实现更新后自动构建。
 
 gitlab 的问题放置到明天，首先解决文件如果过大，不能正常 clone 的问题。
+
+
+使用公司内网搭建的 gitlab，找不到 settings，可能是因为目前这个账号的权限级别不够。
+
+Mac 上通过添加 私钥方式进行连接成功。
+
+liunx 打包机上也使用类似方式进行连接，成功连接。
+
+目前为止，jenkins 和 gitlab 的联动完成，可以手动更新代码库。
+
+现在拓展一个发送邮箱功能。
