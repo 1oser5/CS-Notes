@@ -1,7 +1,7 @@
 [部分资料来源](https://github.com/CyC2018/CS-Notes)
 
 # 📚 书籍
-+ [ProGit](./书籍/ProGi)
++ [ProGit](./书籍/ProGit)
 + [Python并行编程](./书籍/Python并行编程)
 + [Python数据分析](./书籍/Python数据分析)
 # 🐍 Python
