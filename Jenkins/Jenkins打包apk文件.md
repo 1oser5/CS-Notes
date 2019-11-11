@@ -70,3 +70,73 @@ gradle -v
 晕了，原来是用 vue 开发的。
 
 原来公司是用 vue 加 HBuilder 打包的，哇！！
+
+
+之前的 HBuilder 命令行方案应该是不行的，好像没推出这个东西，只能使用 cordova。
+
+首先 `npm install` 所有的包，然后在 `npm run build`，发现 `node.js` 版本不够。
+
+目前公司 linux 服务器上的 node 版本为 6+。
+
+### 更新node
+
+首先清除 npm cache
+```
+sudo npm cache clean -f
+```
+安装 n 模块
+```
+sudo npm install -g n
+```
+安装最新稳定版本
+```
+sudo n stable
+```
+查看 node 版本
+```
+node -v
+```
+
+我虽然更新成功了，但是 `node -v` 显示的还是之前那个版本。
+
+可能是下载了两个 node，直接删除吧
+```
+yum remove nodejs npm -y
+```
+
+然后重新安装，推荐使用源码安装。
+
+下载源码
+```
+wget http://nodejs.org/dist/v0.10.30/node-v0.10.30.tar.gz
+```
+
+解压源码
+```
+tar xzvf node-v* && cd node-v*
+```
+
+安装必要的编译软件
+```
+sudo yum install gcc gcc-c++
+```
+
+编译
+```
+./configure
+make
+sudo make install
+```
+
+查看版本 
+```
+node --version
+```
+
+由于安装位置不一样（可能是权限问题？），需要创建软连接
+```
+ln -s /usr/bin/node /usr/bin/node
+ln -s /usr/bin/npm /usr/bin/npm
+```
+-s 之后是你安装的node位置
+
