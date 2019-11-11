@@ -5,12 +5,13 @@
 + [Python并行编程](./书籍/Python并行编程)
 + [Python数据分析](./书籍/Python数据分析)
 # 🐍 Python
-+ [Python常见问题](./Python/Python常见问题)
++ [Python常见问题](./Python/Python常见问题.md)
 
 # 👮 CI
 + [Jenkins](./Jenkins)
 # 💩 Shell
 + [修改原始终端为oh-my-zsh](./Shell/修改原始终端为oh-my-zsh.md)
++ [切换vim主题](./Shell/切换vim主题.md)
 
 # 💻 操作系统
 ## 计算机操作系统
