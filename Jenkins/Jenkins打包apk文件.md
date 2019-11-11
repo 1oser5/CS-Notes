@@ -104,39 +104,75 @@ node -v
 yum remove nodejs npm -y
 ```
 
-然后重新安装，推荐使用源码安装。
 
-下载源码
-```
-wget http://nodejs.org/dist/v0.10.30/node-v0.10.30.tar.gz
-```
+1、下载源码，你需要在https://nodejs.org/en/download/下载最新的Nodejs版本，本文以v0.10.24为例:
 
-解压源码
-```
-tar xzvf node-v* && cd node-v*
-```
+cd /usr/local/src/
+wget http://nodejs.org/dist/v0.10.24/node-v0.10.24.tar.gz
+2、解压源码
 
-安装必要的编译软件
-```
-sudo yum install gcc gcc-c++
-```
+tar zxvf node-v0.10.24.tar.gz
+3、 编译安装
 
-编译
-```
-./configure
+cd node-v0.10.24
+./configure --prefix=/usr/local/node/0.10.24
 make
-sudo make install
+make install
+4、 配置NODE_HOME，进入profile编辑环境变量
+
+vim /etc/profile
+设置 nodejs 环境变量，在 export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL 一行的上面添加如下内容:
+
+#set for nodejs
+export NODE_HOME=/usr/local/node/0.10.24
+export PATH=$NODE_HOME/bin:$PATH
+:wq保存并退出，编译/etc/profile 使配置生效
+
+source /etc/profile
+验证是否安装配置成功
+
+node -v
+输出 v0.10.24 表示配置成功
+
+npm模块安装路径
+
+/usr/local/node/0.10.24/lib/node_modules/
+
+确实是下载好了 npm 和 node，但是发现没法 `sudo npm `
+安装。
+
+查了一下 npm 文件 应该放在 `/usr/local/bin/npm` 下，不然就会报错
+
+只能建立软连接解决，不然就要重下了。
+```
+sudo ln -s /usr/local/node/0.10.24/bin/npm /usr/local/bin/npm
 ```
 
-查看版本 
-```
-node --version
-```
+我真的服了，这东西是真的不好用。最终我使用 nvm 下的真的快，nvm天下第一。
 
-由于安装位置不一样（可能是权限问题？），需要创建软连接
+1.安装并下载 nvm 脚本
 ```
-ln -s /usr/bin/node /usr/bin/node
-ln -s /usr/bin/npm /usr/bin/npm
-```
--s 之后是你安装的node位置
+curl https://raw.githubusercontent.com/creationix/nvm/v0.13.1/install.sh | bash
 
+source ~/.bash_profile
+```
+列出所有的版本
+```
+nvm list-remote
+```
+安装对应版本
+```
+nvm install v0.10.30
+```
+查看已安装版本
+```
+nvm list
+```
+切换版本
+```
+nvm use v0.10.30
+```
+设为默认版本
+```
+nvm alias default v0.10.30
+```
