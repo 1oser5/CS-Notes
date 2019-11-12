@@ -293,3 +293,11 @@ cp -r dist/*  ~/zhyl-git/v_cordova/www
 
 
 国内找了半天怎么下载 sdk，最后还是用了人家的傻瓜方法。 https://gist.github.com/jpswade/33841e261b28073d9e7551922acea1f2#file-install_adb-sh-L10
+
+
+打开 sdk
+```
+./tools/bin/sdkmanager
+```
+
+还是一样的报错。可能是因为 gradle 版本问题。
