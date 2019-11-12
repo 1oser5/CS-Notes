@@ -51,7 +51,7 @@ ls /opt/gradle/gradle-6.0
 最后需要设置系统路径
 
 ```
-export PATH=$PATH:/opt/gradle/gradle-6.0/bin
+g
 ```
 
 
@@ -176,3 +176,120 @@ nvm use v0.10.30
 ```
 nvm alias default v0.10.30
 ```
+
+第二天来公司发现之前node版本都不见了。。目前不知道什么原因，使用 nvm 重新下载一个即可。
+这好像是因为 nvm 配置有误，我下午在确认一下。
+
+## 安装 cordova
+
+安装之前需要 Android JDK
+
+1.下载Android SDK
+http://tools.android-studio.org/index.php/sdk/   
+
+我下载的是：`android-sdk_r24.4.1-linux.tgz`
+
+2.解压Android SDK
+将android-sdk_r24.4.1-linux.tgz文件复制到Linux 文件系统中的某个目录，我的是目录是/usr/local/
+执行命令解压：
+```
+tar -zvxf android-sdk_r24.4.1-linux.tgz
+```
+3.配置环境变量
+
+在文件 `/etc/profile` 末端添加如下两行：
+```
+export ANDROID_HOME=/usr/local/android-sdk-linux
+export PATH=$ANDROID_HOME/tools:$PATH
+```
+`android-sdk-linux` 是你解压后的文件名，`tools`一定要这样写，是里面文件夹的名称
+
+执行命令文件立马生效
+```
+source /etc/profile
+```
+
+再使用 npm 命令安装
+```
+npm install -g cordova
+```
+
+运行 `javac -version` 报错，但是运行 `java -version`可以正常显示版本号，好像之前安装的是 `jre` 使用 
+```
+yum install java-devel
+```
+安装一下 `jdk` 即可。
+
+新建 cordova项目
+
+```
+cordova create my_app
+```
+切换到 my_app，运行
+```
+cordova platform add android
+```
+添加安卓环境
+
+
+运行
+
+```
+cordova build android
+```
+
+报错
+
+```
+A problem occurred evaluating project ':app'.
+> No installed build tools found. Install the Android build tools version 19.1.0 or higher.
+```
+
+缺少 安卓 build tools，这安卓也太麻烦了。
+
+可以使用安卓自动升级安装
+
+获取所有可用下载
+```
+android list sdk --all
+```
+下载对应版本号
+```
+android update sdk -u -a -t <package no.>
+```
+
+但是我这个账户不是 root ，权限不够，在自动下载的时候会报错。只能问 leader 要 root 账户了。
+
+root 账户真香😘，轻松安装。
+
+
+运行
+
+```
+cordova build android
+```
+又报错了，报错大概就是没有 licences
+```
+Failed to install the following Android SDK packages as some licences have not been accepted.
+     platforms;android-28 Android SDK Platform 28
+```
+之后你直接用
+```
+android update sdk -u -a -t <package no.>
+```
+把他少的装上就像，API对应上
+
+
+linux 将一个文件下的所有文件复制到另一个文件下
+```
+cp -r dist/*  ~/zhyl-git/v_cordova/www
+```
+
+现在给出的猜想是由于权限原因无法正常使用 jdk 导致 build 失败
+
+现在使用 root 账户尝试一下
+
+如果俩个不同用户访问同一个文件夹，是有互斥锁机制的。具体表现为第二个用户无法进入或者打开第二个文件夹。
+
+
+国内找了半天怎么下载 sdk，最后还是用了人家的傻瓜方法。 https://gist.github.com/jpswade/33841e261b28073d9e7551922acea1f2#file-install_adb-sh-L10
