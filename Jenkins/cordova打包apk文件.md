@@ -301,3 +301,40 @@ cp -r dist/*  ~/zhyl-git/v_cordova/www
 ```
 
 还是一样的报错。可能是因为 gradle 版本问题。
+
+今天早上来公司一运行，发现可以正常打包了🙄
+
+现在要把 apk 文件从打包机上下载下来，发给测试看看这个 apk 文件是否有问题。
+
+
+从Linux服务器下载文件夹到本地
+
+使用scp命令
+
+
+#把本地的source.txt文件拷贝到192.168.0.10机器上的/home/work目录下
+```
+scp /home/work/source.txt work@192.168.0.10:/home/work/
+```
+
+
+#把192.168.0.10机器上的source.txt文件拷贝到本地的/home/work目录下
+```
+scp work@192.168.0.10:/home/work/source.txt /home/work/
+```
+
+
+#把192.168.0.10机器上的source.txt文件拷贝到192.168.0.11机器的/home/work目录下
+```
+scp work@192.168.0.10:/home/work/source.txt work@192.168.0.11:/home/work/
+````
+
+#拷贝文件夹，加-r参数
+```
+scp -r /home/work/sourcedir work@192.168.0.10:/home/work/  
+```
+
+发现打包出来的大小就有点不对，只有1.5M。在测试机器上运行起来发现问题很大，删除服务器原文件，重新 git 一下吧。
+
+
+好像不需要修改 vue 源文件就可以直接打包，哇终于成功了。
