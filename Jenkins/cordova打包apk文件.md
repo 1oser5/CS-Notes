@@ -338,3 +338,7 @@ scp -r /home/work/sourcedir work@192.168.0.10:/home/work/
 
 
 好像不需要修改 vue 源文件就可以直接打包，哇终于成功了。
+
+完整流程图
+
+![avator](../pic/cordova打包apk.jpg)
