@@ -98,6 +98,12 @@ source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
 + 现在 Xcode 可以自动生成该文件
 
 
+生成那个 bundle 文件后，记得要打开 **workspace** 文件才能运行，不然会有奇奇怪怪的错误啊朋友。
+
+然后注册一下设备，把公司的 ipad 插到 mac 上，在 iTunes 里就能看到了，注册好之后，使用 ipad 作为设备就行了。
+
+但是不知道为什么打包出来俩个 ipa 文件？？？
+
 
 ## APK
 

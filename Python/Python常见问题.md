@@ -6,3 +6,7 @@
 问题来源：stackoverflow 高分 Python 问题
 
 链接：https://stackoverflow.com/questions/419163/what-does-if-name-main-do
+
+
+
+# 2.os.system('cd')问题
