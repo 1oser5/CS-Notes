@@ -5,6 +5,7 @@
 + [Python数据分析](./书籍/Python数据分析)
 # 🐍 Python
 + [Python常见问题](./Python/Python常见问题.md)
++ [脚本](./Python/脚本)
 
 # 👮 CI
 + [Jenkins](./CI/Jenkins)
