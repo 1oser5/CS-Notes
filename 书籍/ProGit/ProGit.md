@@ -324,3 +324,119 @@ doc/**/*.txt
 ```
 
 `**/` 符号在 Git 1.8.2 之后可用
+
+
+### 查看已暂存和为暂存的更新
+
+```
+$ git diff 
+```
+可以查看尚未暂存的文件更新了哪些部分
+
+```
+git diff --cached or git diff --staged
+```
+
+看看暂存文件和上次提交快照有哪些差异
+
+### 提交更新
+
+提交命令
+```
+$ git commit
+```
+
+配合 `-m` 参数提交说明
+```
+$ git commit -m "Story 182: Fix benchmarks for speed"
+```
+
+每一次提交操作，都是对项目的一次快照。
+
+
+### 跳过使用暂存区域
+
+只要在提交时给 `git commit` 加上 `-a` 选项，Git 就会把所有自动以跟踪过的文件放入暂存区一并提交，从而跳过 `git add` 步骤。
+```
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   benchmarks.rb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git commit -a -m 'added new benchmarks'
+[master 83e38c7] added new benchmarks
+ 1 files changed, 5 insertions(+)
+```
+### 移除文件
+
+要从 Git 中删除某个文件，就必须要从已跟踪文件清单中移除（确切说，是从暂存区移除），然后提交。可以使用 `git rm` 完成，并连带着删除指定的文件。
+
+如果你手动删除目录中的文件，那么运行 `git status` 会看到 `Changes not staged for commit`部分看到：
+
+```
+$ rm grit.gemspec
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        deleted:    grit.gemspec
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+然后在运行 `git rm` 记录此次移除文件的操作
+
+```
+$ git rm grit.gemspec
+rm 'grit.gemspec'
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        deleted:    grit.gemspec
+```
+
+最后提交的时候，文件就不在纳入版本管理，如果删除之前已经放到暂存区域的话，必须要使用强制删除选项 `-f` ，以防误删文件丢失修改的内容。
+
+另一种情况是你只是想将文件从 Git 仓库删除，但是将其保留在工作目录中。要移除追踪但不删除文件，运行
+```
+$ git rm -cached readme.txt
+```
+后面可以列出文件或者目录名，可以使用 glob 模式
+```
+$ git rm log/\*.log
+```
+不加反斜杠的话，不会递归调用，只会删除 log 目录下扩展名为 `.log` 的文件。
+
+### 移动文件
+
+不行别的 VSC 系统，Git 不跟踪文件移动操作，但是你在 Git 中重命名了某个文件，Git 仍然知道。
+
+要在 Git 中对文件进行改名，运行
+```
+$ git mv f1 f2
+```
+他会如预期般工作，此时查看状态时，也会明白无误的看到关于重命名的操作
+```
+$ git mv README.txt README
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        renamed:    README.txt -> README
+```
+其实 `git mv` 相当于运行了
+
+```
+$ mv README.txt README
+$ git rm README.txt
+$ git add README
+```
