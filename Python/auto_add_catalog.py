@@ -21,6 +21,7 @@ def made_catalog(f_name: str) -> None:
     
     生成md文件目录函数
     '''
+    # todo 错误捕捉
     with open(f_name,'r+') as f:
         s = []
         n = f.read()
@@ -49,6 +50,7 @@ if __name__ == '__main__':
         print('\033[1;35m 输入为文件夹，遍历文件夹内所有 md 文件 \033[0m')
         #获得文件夹内所有文件
         files = os.listdir(f_name)
+        #todo 递归调用文件夹
         for j in files:
             #跳过所有非 md 文件
             if os.path.splitext(j)[-1] != '.md':
@@ -56,8 +58,7 @@ if __name__ == '__main__':
             else:
                 print('\033[1;35m 当前文件为 %s \033[0m' % j)
                 p = input('是否需要生成[y/n]')
-                if p == 'n':
-                    continue
+                if p == 'n':continue
                 if p == 'y':
                     made_catalog(f_name+'/'+j)
                 # todo 输入y/n之外的怎么处理
