@@ -1,10 +1,10 @@
-开发说一般项目分两种，react-native 和 Vue，所有两种打包都得研究。并且从目前来看 rn 的打包需求更急一些。
+开发说一般项目分两种，React-Native 和 Vue，所有两种打包都得研究。并且从目前来看React-Native的打包需求更急一些。
 
-简单看了一下文档，发现 rn 对于移动端打包更加友好些。
+简单看了一下文档，发现 React-Native 对于移动端打包更加友好些。
 
 ## IPA 打包
 
-首先全局安装下 rn 
+首先全局安装下 React-Native
 ```
 npm install -g react-native
 ```
