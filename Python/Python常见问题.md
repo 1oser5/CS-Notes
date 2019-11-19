@@ -1,9 +1,9 @@
 # 目录
-+ (1. if \__name__ == "main" 做了什么)[1.if \__name__ == "main" 做了什么]
-+ (2.os.system('cd')问题)[2.os.system('cd')问题]
+  + [1. if \__name__ == "main" 做了什么](#1)
++ [2.os.system('cd')问题](2.os.system('cd')问题)
 
 
-## 1.if \__name__ == "\__main__" 做了什么
+## 1.if \__name__ == "\__main__" 做了什么 <span id = 1></span>
 
 问题来源：stackoverflow 高分 Python 问题
 

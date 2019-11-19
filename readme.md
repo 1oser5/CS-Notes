@@ -1,4 +1,3 @@
-[部分资料来源](https://github.com/CyC2018/CS-Notes)
 
 # 📚 书籍
 + [ProGit](./书籍/ProGit)
@@ -8,8 +7,8 @@
 + [Python常见问题](./Python/Python常见问题.md)
 
 # 👮 CI
-+ [Jenkins](./Jenkins)
-+ [pack](./pack)
++ [Jenkins](./CI/Jenkins)
++ [pack](./CI/pack)
 # 💩 Shell
 + [修改原始终端为oh-my-zsh](./Shell/修改原始终端为oh-my-zsh.md)
 + [切换vim主题](./Shell/切换vim主题.md)
@@ -36,3 +35,8 @@
 **排版方式**
 
 笔记内容按照 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 进行排版
+
+**资料来源**
+
+部分资料来源：
+https://github.com/CyC2018/CS-Notes
