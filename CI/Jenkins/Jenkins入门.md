@@ -1,3 +1,25 @@
+# 目录
++ [开始使用Jenkins](#开始使用Jenkins)
+    + [准备工作](#准备工作)
+    + [运行Jenkins](#运行Jenkins)
++ [创建第一个Pipeline](#创建第一个Pipeline)
+    + [什么是JenkinsPipeline?](#什么是JenkinsPipeline?)
+        + [Linux、BSD和MacOS](#Linux、BSD和MacOS)
++ [执行多个步骤](#执行多个步骤)
+    + [超时、重试和更多](#超时、重试和更多)
+    + [完成时动作](#完成时动作)
++ [定义执行环境](#定义执行环境)
++ [使用环境变量](#使用环境变量)
++ [记录测试和构建结果](#记录测试和构建结果)
++ [清理和通知](#清理和通知)
+    + [电子邮件](#电子邮件)
+    + [Hipchat](#Hipchat)
++ [Docker中使用Jenkins](#Docker中使用Jenkins)
+
+
+
+
+
 # 开始使用 Jenkins
 ## 准备工作
 机器要求：
@@ -170,7 +192,7 @@ post{
 
 有多种方法可以发送通知
 
-### 电子邮件
+## 电子邮件
 ```python
 post{
     failure{
@@ -181,7 +203,7 @@ post{
 }
 ```
 
-### Hipchat
+## Hipchat
 
 ```python
 post{

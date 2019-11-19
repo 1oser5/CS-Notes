@@ -1,3 +1,43 @@
+# 目录
++ [Charpter1准备工作](#Charpter1准备工作)
+    + [本书的内容](#本书的内容)
+        + [什么样的数据？](#什么样的数据？)
+    + [为什么要使用Python进行数据分析](#为什么要使用Python进行数据分析)
+        + [Python作为胶水语言](#Python作为胶水语言)
+        + [为什么不选Python](#为什么不选Python)
+    + [重要的Python库](#重要的Python库)
+        + [NumPy](#NumPy)
+        + [pandas](#pandas)
+        + [matplotlib](#matplotlib)
++ [Charpter2Python语法基础，IPython和JupyterNotebooks](#Charpter2Python语法基础，IPython和JupyterNotebooks)
+        + [IPython基础](#IPython基础)
+            + [运行IPythonShell](#运行IPythonShell)
+                + [Tab补全](#Tab补全)
+                + [自省](#自省)
+                + [%run命令](#%run命令)
+                + [魔术命令](#魔术命令)
++ [Charpter4NumPy(NumercalPython)](#Charpter4NumPy(NumercalPython))
+    + [NumPy的ndarray：一种多为数组对象](#NumPy的ndarray：一种多为数组对象)
+    + [创建ndarray](#创建ndarray)
+    + [ndarray的数据类型](#ndarray的数据类型)
+    + [numpy数组运算](#numpy数组运算)
+    + [基本的切片和索引](#基本的切片和索引)
+    + [切片索引](#切片索引)
+    + [布尔型索引](#布尔型索引)
+    + [花式索引](#花式索引)
+    + [数组转置和轴兑换](#数组转置和轴兑换)
+    + [通用函数](#通用函数)
+    + [利用数组进行数据处理](#利用数组进行数据处理)
+    + [将条件逻辑表述为数组运算](#将条件逻辑表述为数组运算)
+    + [数学和统计方法](#数学和统计方法)
+    + [用于布尔型数组的方法](#用于布尔型数组的方法)
+    + [排序](#排序)
+    + [唯一化以及其他的集合逻辑](#唯一化以及其他的集合逻辑)
+
+
+
+
+
 # Charpter 1 准备工作
 ## 本书的内容
 本书主要介绍使用 Python 进行数据控制、处理、整理、分析等具体细节和基本要点，重点介绍 python 编程、库以及用于数据分析的工具。
