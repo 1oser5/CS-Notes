@@ -82,7 +82,7 @@ keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -ke
 
 ## 设置 gradle变量
 
-1.把my-release-key.keystore文件放到你工程中的android/app文件夹下。
+1.把 my-release-key.keystore 文件放到你工程中的android/app文件夹下。
 
 2.编辑~/.gradle/gradle.properties（全局配置，对所有项目有效）或是项目目录/android/gradle.properties（项目配置，只对所在项目有效）。如果没有gradle.properties文件你就自己创建一个，添加如下的代码（注意把其中的****替换为相应密码）
 
@@ -138,3 +138,7 @@ $ ./gradlew assembleRelease
 只要注意 java 环境不要太新就像，不然会报错
 
 生成的包在 `android/app/build/outputs/apk/release/app-release.apk`
+
+完整流程图
+
+![avator](../../pic/React-native打包apk.jpg)
