@@ -1,7 +1,3 @@
-# 目录
-  + [1. if \__name__ == "main" 做了什么](#1)
-+ [2.os.system('cd')问题](2.os.system('cd')问题)
-
 
 ## 1.if \__name__ == "\__main__" 做了什么 <span id = 1></span>
 
@@ -34,3 +30,98 @@ os.system 实际上运行了一个子进程，是通过调用 C 标准库中的 
 同时也可以使用 `subprocess` 模块
 
 存疑。
+
+## 3.正确理解Python的@staticmethod和@classmethod
+
+```python
+class A(object):
+    #实例方法
+    def m1(self, m):
+        pass
+    #类方法
+    @classmethod
+    def m2(cls, n):
+        pass
+    #静态方法
+    @staticmethod
+    def m3(n):
+        pass
+
+a = A()
+a.m1()
+A.m2()
+a.m2()
+A.m3()
+a.m3()
+```
+### 实例方法
+
+`m1` 是我们最常见的实例方法，其第一个参数的 `self`，这是约定俗称的，实例对象就是通过 `self` 参数进行绑定的。
+
+> **`self` 指向实例对象**
+
+### 类方法
+
+而 `m2` 函数就是所谓的类方法，其不需要实例化就可以调用，第一个参数 `cls` 传递的是类对象。当调用 `a.m2()` 时，类方法也会通过实例对象找到他所属的类。
+
+> **`cls`指向类对象**
+
+如果方法里面使用调用了静态类，那么使用类方法是合适的，因为这样可以隐形调用该方法。
+```python
+class A:
+
+    @staticmethod
+    def m1()
+        pass
+
+    @staticmethod
+    def m2():
+        A.m1() # bad
+
+    @classmethod
+    def m3(cls):
+        cls.m1() # good
+```
+同时可以作为初始化之前获得类信息以及对类进行动态配置。
+
+因为 classmethod 增加了对一个实际类的引用，带来了很多方便：
+
++ 方法可以知道自己被哪个类调用
++ 子类调用可以返回子类实例而非基类实例
++ 子类调用可以返回其他的 classmethod 方法
+
+classmethod 方法和 metaclass 方法是等效的，classmethod 的优先级较高些
+
+使用 metaclass 优点：
+
++ 不破坏类继承关系，某些情况可以让类继承有其他语义
++ 可以通过 isinstance 判断是否有某个 metaclass 产生
++ 功能强大
++ 与业务代码分离
+
+使用 classmethod 优点：
++ 简单，不引入额外复杂度
++ 不占用 metaclass的位置（metaclass 只能有一个）
++ 与业务代码在一起
+
+
+### 静态方法
+
+静态方法不需要特指指向，使用 `A.m3()` 或者 `a.m3()` 都可以调用。
+
+如果方法中不需要访问任何实例和属性，存储只是传入参数返回数据，可以使用静态方法。
+
+其实将静态方法放在类外作为普通函数也行，放在类内能够好的保护数据和封装罢了。
+
+
+
+类方法和实例方法首参数指向：
+
+![avator](../pic/staticmethod-classmethod.jpg)
+
+> 类方法和静态方法的不同在于存在类的继承的情况下对多态的支持不同。
+
+参考：https://www.zhihu.com/question/20021164 灵剑的回答
+
+以及
+https://zhuanlan.zhihu.com/p/28010894
