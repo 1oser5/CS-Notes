@@ -125,3 +125,71 @@ classmethod 方法和 metaclass 方法是等效的，classmethod 的优先级较
 
 以及
 https://zhuanlan.zhihu.com/p/28010894
+
+
+## 4.如何判断Python的当前版本
+
+### 使用sys模块
+
+```python
+#获得当前 python 版本
+In [5]: sys.version_info                                                        
+Out[5]: sys.version_info(major=3, minor=7, micro=0, releaselevel='final', serial=0)
+```
+
+我当前的版本号是 `3.7.0` 显示的就是 `major=3, minor=7, micro=0`
+
+判断 `python2.x` 或者 `python3.x`
+
+```python
+import sys
+#sys syntax sugar
+_ver = sys.version_info
+# is python2.x?
+is_py2 = (_ver[0] == 2)
+#is python3.x
+is_py3 = (_ver[0] == 3)
+```
+
+如果是详细的版本比较，来确认当前版本是否可以下载某些第三方库时
+
+```python
+import sys
+#sys syntax sugar
+_ver = sys.version_info
+major, minor, patch = _ver[:3]
+# python >= 3.2.1
+assert major == 3
+assert minor >= 2
+assert patch >= 1
+```
+
+## 5.Python字符串类型
+
+Python中的字符串有两种数据类型：str 类型和 unicode 类型。
+
+str 类型采用的 `ASCII` 编码，也就是说它无法表示中文
+。unicode类型采用 `unicode` 编码，能够表示任意字符，包括中文及其它语言。
+
+并且 python 中不存在像 c 语言中的`char`类型，就算是单个字符也是字符串类型。
+
+字符串默认采用的ASCII编码，如果要显示声明为 `unicode` 类型的话，需要在字符串前面加上 `'u'` 或者 `'U'`。例如：
+
+```python
+u = u'汉'  
+print repr(u) # u'\u6c49'  
+s = u.encode('UTF-8')  
+print repr(s) # '\xe6\xb1\x89'  
+u2 = s.decode('UTF-8')  
+print repr(u2) # u'\u6c49' 
+```
+
+对于编码的经验总结：
+
+1.在python文件头声明编码格式 ；
+```
+#-*- coding: utf-8 -*-  
+```
+2.将字符串统一声明为 `unicode` 类型，即在字符串前加`u`或者 `U`;
+
+3.对于文件读写的操作，建议适用 codecs.open() 代替内置的o pen()，遵循一个原则，用哪种格式写，就用哪种格式读。

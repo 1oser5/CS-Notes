@@ -28,10 +28,8 @@
 
 # 💾 数据库
 + [数据库系统原理](./数据库/数据库系统原理)
-+ [SQL](./数据库/SQL)
-+ [MySQL](./数据库/MySQL)
-+ [Redis](./数据库/Redis)
-+ [Leetcode-Database题解](./数据库/Leetcode-Database题解)
+
+# 💡组成原理
 
 **排版方式**
 
