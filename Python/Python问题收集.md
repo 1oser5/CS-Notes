@@ -192,4 +192,57 @@ print repr(u2) # u'\u6c49'
 ```
 2.将字符串统一声明为 `unicode` 类型，即在字符串前加`u`或者 `U`;
 
-3.对于文件读写的操作，建议适用 codecs.open() 代替内置的o pen()，遵循一个原则，用哪种格式写，就用哪种格式读。
+3.对于文件读写的操作，建议适用 codecs.open() 代替内置的 open()，遵循一个原则，用哪种格式写，就用哪种格式读。
+
+
+## 6.Python类中的super().__init__()
+
+
+```python
+class Father:
+    def __init__(self, name):
+        self.name = name
+
+
+class Child(Father):
+    pass
+
+class Child_i(Father):
+    def __init__(self):
+        pass
+
+class Child_s(Father):
+    def __init__(self, arg, name):
+        super().__init__(name)
+
+```
+
++ 如果子类未重写父类的 `__init__ ` 方法，则自动继承父类的 `__init__` 方法。
++ 如果重写了父类方法，则不调用父类 `__init__` 方法。
+
+**而 `super().__init__()` 出现的意义就是在重写父类方法的同时，调用了父类的 `__init__` 方法，如果父类还有父类，则会递归调用。**
+
+```python
+class A(object):
+    def __init__(self):
+        print("I am A")
+
+class B(A):
+    def __init__(self):
+        super().__init__()
+        print("I am B")
+
+class C(B):
+    def __init__(self):
+        super().__init__()
+        print("I am C")
+
+if __name__ == '__main__':
+    c = C()
+# print
+# I am A
+# I am B
+# I am C
+```
+
+如果是多继承，则继承中super的调用顺序是与 `MRO-C3` 的类方法查找顺序一样的。
