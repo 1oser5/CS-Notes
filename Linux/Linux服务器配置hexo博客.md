@@ -42,7 +42,60 @@ $ ssh-keygen -t rsa -C "humingx@yeah.net"
 查看本地公钥
 
 ```
-vim /root/.ssh/id_rsa.pub
+$ vim /root/.ssh/id_rsa.pub
 ```
 
 将本地公钥复制到 GitHub 的 SSH key，就可以实现本地下载了。
+
+测试是否添加成功，可以在命令行输入一下命令：
+
+```
+$ ssh -T git@github.com
+```
+
+
+## hexo
+
+安装 Hexo，命令行运行
+
+```
+$ npm install -g hexo-cli
+```
+初始化Hexo，在命令行依次运行
+```
+$ hexo init <folder>
+$ cd <folder>
+$ npm install
+```
+
+新建完成后，在路径下，会产生这些文件和文件夹：
+
+```
+.
+├── _config.yml
+├── package.json
+├── scaffolds
+├── source
+|   ├── _drafts
+|   └── _posts
+└── themes
+```
+
+安装 `hexo-deployer-git`，命令行运行
+
+```
+$ npm install hexo-deployer-git --save
+```
+### 站点配置文件 
+ 
+路径为 `<folder>\_config.yml`
+
+### 站点配置文件 
+
+​ 路径为 `<folder>\themes\<主题文件夹>\_config.yml`
+
+### 启动服务器
+
+```
+$ hexo server
+```
