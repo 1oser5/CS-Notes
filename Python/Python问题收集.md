@@ -246,3 +246,31 @@ if __name__ == '__main__':
 ```
 
 如果是多继承，则继承中super的调用顺序是与 `MRO-C3` 的类方法查找顺序一样的。
+
+
+## 7.Centos安装Python3之后yum无法正常使用
+
+
+```
+$ cd /usr/bin
+$ mv python python.backup
+$ ln -s /usr/local/bin/python3 /usr/bin/python
+```
+
+将新版本 Python3 创建软连接使得默认 Python 为 Python3 之后
+
+运行 `yum install xx` 命令报错
+
+```
+  File "/usr/libexec/urlgrabber-ext-down", line 28
+    except OSError, e:
+                  ^
+SyntaxError: invalid syntax
+```
+因为 yum 依赖于 Python2，所以要修改 yum 的 Python 文件依赖
+
+修改 `/usr/bin/yum` 文件头部的 `#!usr/bin/python` 修改为 `#!/usr/bin/python2.7`即可。
+
+运行 `yum install xxx` 还是报错，那就直接找到报错的文件，查看其 Python 指向，运行 `vim /usr/libexec/urlgrabber-ext-down`
+
+果不其然它首部为 `#!usr/bin/python`，修改为 `#!/usr/bin/python2.7` 可以正常运行了。
