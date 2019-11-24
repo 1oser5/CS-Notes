@@ -434,3 +434,184 @@ $ git rm README.txt
 $ git add README
 ```
 
+## 查看提交历史
+
+提交若干更新或者克隆的新的项目之后想要查看提交历史，可以使用 `git log` 查看，按 `q` 退出。
+
+如果不加参数，`git log` 会按时间列出所有的提交记录，最新的排在最上面，每次更新都有一个 SHA-1 校验和，作者的名字和电子邮箱、提交时间呢，最后一个缩进表示段落说明
+
+
+通常我们使用 `-p` 参数显示每次提交的差异，用 `-2` 仅显示最近两次的更新。
+```
+$ git log -p -2
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+diff --git a/Rakefile b/Rakefile
+index a874b73..8f94139 100644
+--- a/Rakefile
++++ b/Rakefile
+@@ -5,5 +5,5 @@ require 'rake/gempackagetask'
+ spec = Gem::Specification.new do |s|
+     s.name      =   "simplegit"
+-    s.version   =   "0.1.0"
++    s.version   =   "0.1.1"
+     s.author    =   "Scott Chacon"
+     s.email     =   "schacon@gee-mail.com
+
+commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Sat Mar 15 16:40:33 2008 -0700
+
+    removed unnecessary test code
+
+diff --git a/lib/simplegit.rb b/lib/simplegit.rb
+index a0a60ae..47c6340 100644
+--- a/lib/simplegit.rb
++++ b/lib/simplegit.rb
+@@ -18,8 +18,3 @@ class SimpleGit
+     end
+
+ end
+-
+-if $0 == __FILE__
+-  git = SimpleGit.new
+-  puts git.show
+-end
+\ No newline at end of file
+```
+
+如果你需要查看单词级别的对比，可以在 `git log -p` 后面加上 `--word-diff` 选项，这个在论文以及书籍类文件对比时相当有用。
+```
+$ git log -U1 --word-diff
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+diff --git a/Rakefile b/Rakefile
+index a874b73..8f94139 100644
+--- a/Rakefile
++++ b/Rakefile
+@@ -7,3 +7,3 @@ spec = Gem::Specification.new do |s|
+    s.name      =   "simplegit"
+    s.version   =   [-"0.1.0"-]{+"0.1.1"+}
+    s.author    =   "Scott Chacon"
+```
+
+`git log` 还有别的好用的参数，比如 `--stat` 仅显示简要的增改行数统计
+```
+$ git log --stat
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+ Rakefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ ```
+
+还有个常用的 `--pretty` 选项，可以指定使用不同于默认格式的方式展示提交历史，比如 `online` 将每个提交放到一行显示。
+
+```
+$ git log --pretty=oneline
+ca82a6dff817ec66f44342007202690a93763949 changed the version number
+085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
+a11bef06a3f659402fe7563abf99ad00de2209e6 first commit
+```
+
+你甚至可以使用 `format` 来自定义你想要显示的格式，便于后期的提取。
+
+```
+$ git log --pretty=format:"%h - %an, %ar : %s"
+ca82a6d - Scott Chacon, 11 months ago : changed the version number
+085bb3b - Scott Chacon, 11 months ago : removed unnecessary test code
+a11bef0 - Scott Chacon, 11 months ago : first commit
+```
+
+`format` 常用格式占位符及写法
+
+|选项	|说明 |
+|--|--|
+|%H|	提交对象（commit）的完整哈希字串|
+|%h	|提交对象的简短哈希字串|
+|%T	|树对象（tree）的完整哈希字串|
+|%t	|树对象的简短哈希字串|
+|%P	|父对象（parent）的完整哈希字串|
+|%p	|父对象的简短哈希字串|
+|%an|	作者（author）的名字|
+|%ae|	作者的电子邮件地址|
+|%ad|	作者修订日期（可以用 -date= 选项定制格式）|
+|%ar|	作者修订日期，按多久以前的方式显示|
+|%cn|	提交者(committer)的名字|
+|%ce|	提交者的电子邮件地址|
+|%cd|	提交日期|
+|%cr|	提交日期，按多久以前的方式显示|
+|%s	|提交说明|
+
+使用 `oneline` 或者 `format` 时结合 `--graph` 选项，用简单图像展示分支状况
+
+```
+$ git log --pretty=format:"%h %s" --graph
+* 2d3acf9 ignore errors from SIGCHLD on trap
+*  5e3ee11 Merge branch 'master' of git://github.com/dustin/grit
+|\
+| * 420eac9 Added a method for getting the current branch.
+* | 30e367c timeout code and tests
+* | 5a09431 add timeout protection to grit
+* | e1193f8 support for heads with slashes in them
+|/
+* d6016bc require time for xmlschema
+*  11d191e Merge branch 'defunkt' into local
+```
+
+`git log` 常用选项
+
+|选项	|说明|
+|--|--|
+|-p	|按补丁格式显示每个更新之间的差异。|
+|--word-diff|	按 word diff 格式显示差异。|
+|--stat	|显示每次更新的文件修改统计信息。|
+|--shortstat	|只显示 --stat 中最后的行数修改添加移除统计。|
+|--name-only	|仅在提交信息后显示已修改的文件清单。|
+|--name-status|	显示新增、修改、删除的文件清单。|
+|--abbrev-commit|	仅显示 SHA-1 的前几个字符，而非所有的 40 个字符。|
+|--relative-date|	使用较短的相对时间显示（比如，“2 weeks ago”）。|
+|--graph	|显示 ASCII 图形表示的分支合并历史。|
+|--pretty	|使用其他格式显示历史提交信息。可用的选项包括 oneline，short，full，fuller 和 format（后跟指定格式）。|
+|--oneline |	--pretty=oneline --abbrev-commit 的简化用法。|
+
+### 限制输出长度
+
+限制时间长度，比如 `--since` 和 `--until`，下面命令列出近俩周内的提交：
+```
+$ git log --since=2.weeks
+```
+
+其他常用选择筛选方式
+
+|选项	|说明|
+|--|--|
+|-(n)	|仅显示最近的 n 条提交|
+|--since, --after|	仅显示指定时间之后的提交。|
+|--until, --before|	仅显示指定时间之前的提交。|
+|--author|	仅显示指定作者相关的提交。|
+|--committer|	仅显示指定提交者相关的提交。|
+
+可以多次使用删选条件，比如要筛选出 2008 年 10 月期间，Junio Hamano 提交的但未合并的测试脚本，可以使用
+
+```
+$ git log --pretty="%h - %s" --author=gitster --since="2008-10-01" \
+   --before="2008-11-01" --no-merges -- t/
+5610e3b - Fix testcase failure when extended attribute
+acd3b9e - Enhance hold_lock_file_for_{update,append}()
+f563754 - demonstrate breakage of detached checkout wi
+d1a43f2 - reset --hard/read-tree --reset -u: remove un
+51a94af - Fix "checkout --track -b newbranch" on detac
+b0ad11e - pull: allow "git pull origin $something:$cur
+```
