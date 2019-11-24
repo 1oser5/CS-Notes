@@ -85,7 +85,7 @@ source ~/.zshrc
 
 下载
 ```
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
 ```
 配置
 ```
@@ -107,3 +107,36 @@ source ~/.zshrc
 再也不用 Google 了，直接一键解压。
 
 直接把 extract 加入 plugins 即可使用。
+
+## autojump 智能跳转
+
+linux 系统
+```
+$ git clone git://github.com/joelthelion/autojump.git
+```
+
+mac 系统
+```
+brew install autojump
+```
+
+切换到 autojump 目录
+```
+cd /autojump
+```
+
+运行
+```
+$ ./install.py
+```
+vim ~/.zshrc，把以下代码加到尾部
+```
+# 使用brew安装的
+
+[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+source $ZSH/oh-my-zsh.sh
+
+# 使用git安装的
+
+[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && . ~/.autojump/etc/profile.d/autojump.sh
+```
