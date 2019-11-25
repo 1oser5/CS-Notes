@@ -23,7 +23,7 @@ npm install
 
 在 git 项目下输入
 ```
-react-native bundle --entry-file index.ios.js --bundle-output ./ios/main.jsbundle --platform ios --assets-dest ./ios --dev false
+react-native bundle --entry-file index.js --bundle-output ./ios/main.jsbundle --platform ios --assets-dest ./ios --dev false
 ```
 
 相关参数含义：
