@@ -104,7 +104,10 @@ source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
 
 但是不知道为什么打包出来俩个 ipa 文件？？？
 
-
+输出路径
+```
+/Users/zhyl/Desktop/FollowUpApp
+```
 ## APK
 
 

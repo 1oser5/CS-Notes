@@ -13,6 +13,7 @@ Squirtle 是用于将 vue 或者 React-native 自动化打包的库。
 
 vue - apk successfully
 rn - apk successfully
+rn - ipa successfully
 
 TODO
 
@@ -45,3 +46,5 @@ TODO
 14 研究 requests 为什么能引用成功
 
 15 rn 和 cordova 生成的 安卓打包文件位置不一样，如何修正？
+
+16 需要修改 `project.pbxproj` 文件
