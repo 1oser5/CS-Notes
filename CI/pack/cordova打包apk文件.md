@@ -231,6 +231,7 @@ cordova platform add android
 ```
 添加安卓环境
 
+将 `npm run build`打包出的 `dist` 文件夹的内容，复制到 `my_app` 的 `www` 下
 
 运行
 
