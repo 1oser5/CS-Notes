@@ -12,6 +12,7 @@ Squirtle 是用于将 vue 或者 React-native 自动化打包的库。
 最后在 squirtle 文件中组合各模块，暴露成 API 给用户。
 
 vue - apk successfully
+rn - apk successfully
 
 TODO
 
@@ -42,3 +43,5 @@ TODO
 13.调研单元测试
 
 14 研究 requests 为什么能引用成功
+
+15 rn 和 cordova 生成的 安卓打包文件位置不一样，如何修正？
