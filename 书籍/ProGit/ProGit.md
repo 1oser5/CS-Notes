@@ -615,3 +615,176 @@ d1a43f2 - reset --hard/read-tree --reset -u: remove un
 51a94af - Fix "checkout --track -b newbranch" on detac
 b0ad11e - pull: allow "git pull origin $something:$cur
 ```
+
+## 撤销记录
+
+### 修改最后一次提交
+
+我们发现刚的提交有错误或者漏掉了某个文件会，可以修改上一次提交
+```
+$ git commit --amend
+```
+运行该命令后会启动文本编辑器，能看到上次提交的说明，可以编辑后保存，就会使用新的提交说明覆盖上一次提交。
+
+如果你遗漏了某个文件，也可以运行
+```
+$ git commit -m 'initial commit'
+$ git add forgottrn_file
+$ git commit --amend
+```
+
+上面三条命令最终只是产生了一个提交，第二条命令修正了的第一条的提交内容。
+
+### 取消已暂存的文件
+
+有两份文件进行了修改，想要分开提交，但是一不小心用 `git add`，加到了暂存区域，如何撤销其中一个呢？
+`git status` 告诉了我们怎么做
+```
+$ git add .
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   README.txt
+        modified:   benchmarks.rb
+```
+可以使用 `git reset HEAD <file>` 方式取消暂存
+
+试着取消暂存 `benchmark.rb` 文件
+
+```
+$ git reset HEAD benchmarks.rb
+Unstaged changes after reset:
+M       benchmarks.rb
+```
+`benchmarks.rb` 回到了已修改但为暂存状态
+
+### 取消对文件的修改
+
+如果觉得对 `benchmarks.rb` 的修改没有必要，需要取消，使用 `git checkout`指令。
+
+```
+git checkout -- benchmarks.rb
+```
+
+这条指令有风险，请确定你真不需要修改该文件
+
+## 远程仓库的使用
+
+### 查看当前的远程库
+
+可以使用 `git remote` 操作查看当前配置了哪些远程仓库，他会列出每个仓库的简短名字。
+
+在克隆完一个仓库之后，你至少可以看到一个名为 `origin` 的远程库，Git 默认使用该名字来标识你所克隆的远程库。
+```
+$ git clone git://github.com/schacon/ticgit.git
+Cloning into 'ticgit'...
+remote: Reusing existing pack: 1857, done.
+remote: Total 1857 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (1857/1857), 374.35 KiB | 193.00 KiB/s, done.
+Resolving deltas: 100% (772/772), done.
+Checking connectivity... done.
+$ cd ticgit
+$ git remote
+origin
+```
+可加上 `-v` 选项，查看对应克隆地址
+```
+$ git remote -v
+origin  git://github.com/schacon/ticgit.git (fetch)
+origin  git://github.com/schacon/ticgit.git (push)
+```
+
+如果有多个远程库，会将其全部列出
+```
+$ cd grit
+$ git remote -v
+bakkdoor  git://github.com/bakkdoor/grit.git
+cho45     git://github.com/cho45/grit.git
+defunkt   git://github.com/defunkt/grit.git
+koke      git://github.com/koke/grit.git
+origin    git@github.com:mojombo/grit.git
+```
+上面只有 `origin` 使用 `SSH URL` 链接，意味着我只有这个库我可以推送数据上去。
+
+### 添加远程仓库
+
+要添加一个远程仓库，并使用指定的简单名字，可以使用 `git remote add [shortname] [url]`:
+
+```
+$ git remote
+origin
+$ git remote add pb git://github.com/paulboone/ticgit.git
+$ git remote -v
+origin    git://github.com/schacon/ticgit.git
+pb    git://github.com/paulboone/ticgit.git
+```
+现在可以用字符串 `pb` 指代对应的仓库地址，比如要抓取所有 Paul 有的，但本地仓库没有的信息，可以运行 `git fetch pb`:
+```
+$ git fetch pb
+remote: Counting objects: 58, done.
+remote: Compressing objects: 100% (41/41), done.
+remote: Total 44 (delta 24), reused 1 (delta 0)
+Unpacking objects: 100% (44/44), done.
+From git://github.com/paulboone/ticgit
+ * [new branch]      master     -> pb/master
+ * [new branch]      ticgit     -> pb/ticgit
+```
+
+### 从远程库抓取数据
+
+用以下命令从远程库抓取数据
+```
+$ git fetch [remote-name]
+```
+此命令回到远程库中拉取所有你本地仓库还没有的数据。运行完成后你可以在本地访问该远程仓库的所有分支，并将某个分支合并到本地。
+
+如果克隆了一个仓库，则自动将远程仓库归于 `origin`。所有 `git fetch origin` 会抓取你上次克隆或者 `fetch` 之后别人的更新。 `fetch` 只是将远端的数据拉到本地仓库，并自动合并到当前工作分支。
+
+如果设置了某个分支用于追踪某个远程仓库的分支，可以使用 `git pull` 命令自动抓取数据下来，并且将远程仓库自动合并到本仓库中当前分支。实际上 `git clone` 本质上就是自动创建了本地的 `master` 分支用于追踪远程仓库的 `master` 分支。
+
+
+### 推送数据到远程仓库
+
+项目进行到一定阶段，或者要和别人分享成果，就需要将本地仓库中的数据推送到远程仓库。
+```
+git push [remote-name] [brance-name]
+```
+一般来讲会自动使用默认的 `master` 和 `origin` 名字
+```
+$git push origin master
+```
+
+只有在所克隆的服务器上有写权限，并且在你 `push` 之前没有别人 `push` 过，才能成功，也就是说你应当 `pull` 之后再进行 `push`。
+
+
+### 查看远程仓库信息
+
+使用 `git remote show [remote-name]` 查看某个远程仓库的详细信息。
+```
+$ git remote show origin
+* remote origin
+  URL: git://github.com/schacon/ticgit.git
+  Remote branch merged with 'git pull' while on branch master
+    master
+  Tracked remote branches
+    master
+    ticgit
+```
+
+### 远程仓库的删除和命名
+
+可以使用 `git remote rename` 命令修改某个远程仓库在本地的简称，比如把 `pb` 改成 `paul`:
+```
+$ git remote rename pb paul
+$ git remote
+origin
+paul
+```
+仓库迁移或者不再贡献代码，移除对应远程仓库，使用 `git remote rm` 命令:
+```
+$ git remote rm paul
+$ git remote
+origin
+```
