@@ -788,3 +788,204 @@ $ git remote rm paul
 $ git remote
 origin
 ```
+
+## 打标签
+Git 可以在某一时间节点的版本打上标签，人们在发布版本的时候经常怎么做。
+### 列显已有的标签
+运行 `git tag` 即可:
+
+```
+$ git tag
+v0.1
+v1.3
+```
+
+标签是按字母顺序排序，所以标签先后不表示重要程度。
+
+可以使用特定的搜索模式列出符合条件的标签
+```
+$ git tag -l 'v1.4.2.*'
+v1.4.2.1
+v1.4.2.2
+v1.4.2.3
+v1.4.2.4
+```
+
+### 新建标签
+
+Git 的标签有两种 : 轻量级的（lightweight）和含附注的（annotated）
+
+轻量级标签：不会变化的分支，实际上他就是一个指向特定标签的引用。
+附注标签：存储在仓库中的一个独立对象，有自身的校验和信息，标签的名字，电子邮箱和日期
+
+### 含附注的标签
+
+创建一个含附注类型的标签非常简单，用 `-a`（annotated） 指定标签名字即可：
+```
+$ git tag -a v1.4 -m 'my version 1.4'
+$ git tag
+v0.1
+v1.3
+v1.4
+```
+而 `-m` 选项则指定了对应的标签说明，Git 会将其一同保存在标签对象，如果没给出，Git 会启动文本编辑软件供你输入。
+
+可以使用 `git show` 命令查看相应标签的版本信息，并显示打标签的提交对象
+
+```
+$ git show v1.4
+tag v1.4
+Tagger: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Feb 9 14:45:11 2009 -0800
+
+my version 1.4
+
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch 'experiment'
+```
+
+### 签署标签
+
+如果你有私钥，可以用 GPG 来签署标签，只需要把之前的 `-a` 改为 `-s`（signed）
+```
+$ git tag -s v1.5 -m 'my signed 1.5 tag'
+You need a passphrase to unlock the secret key for
+user: "Scott Chacon <schacon@gee-mail.com>"
+1024-bit DSA key, ID F721C45A, created 2009-02-09
+```
+
+再运行 `git show` 会看到对应的 GPG 签名
+```
+$ git show v1.5
+tag v1.5
+Tagger: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Feb 9 15:22:20 2009 -0800
+
+my signed 1.5 tag
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.8 (Darwin)
+
+iEYEABECAAYFAkmQurIACgkQON3DxfchxFr5cACeIMN+ZxLKggJQf0QYiQBwgySN
+Ki0An2JeAVUCAiJ7Ox6ZEtK+NvZAj82/
+=WryJ
+-----END PGP SIGNATURE-----
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch 'experiment'
+```
+
+### 轻量级标签
+
+轻量级标签保存着对应提交对象的校验信息的文件，要创建这样一个标签，直接给出标签名即可
+```
+$ git tag v1.4-lw
+$ git tag
+v0.1
+v1.3
+v1.4
+v1.4-lw
+v1.5
+```
+
+### 验证标签
+可以使用 `git tag -v [tag-name]` 的方式来验证已签署标签。
+```
+$ git tag -v v1.4.2.1
+object 883653babd8ee7ea23e6a5c392bb739348b1eb61
+type commit
+tag v1.4.2.1
+tagger Junio C Hamano <junkio@cox.net> 1158138501 -0700
+
+GIT 1.4.2.1
+
+Minor fixes since 1.4.2, including git-mv and git-http with alternates.
+gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Good signature from "Junio C Hamano <junkio@cox.net>"
+gpg:                 aka "[jpeg image of size 1513]"
+Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A
+```
+
+### 后期加注标签
+
+你可以在后期对早期提交打上标签，比如
+```
+$ git log --pretty=oneline
+15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch 'experiment'
+a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
+0d52aaab4479697da7686c15f77a3d64d9165190 one more thing
+6d52a271eda8725415634dd79daabbc4d9b6008e Merge branch 'experiment'
+0b7434d86859cc7b8c3d5e1dddfed66ff742fcbc added a commit function
+4682c3261057305bdd616e23b64b0857d832627b added a todo file
+166ae0c4d3f420721acbb115cc33848dfcc2121a started write support
+9fceb02d0ae598e95dc970b74767f19372d61af8 updated rakefile
+964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
+8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme
+```
+
+忘记在提交 'update rakefile' 后打上版本号 v1.2。没关系，只需要在打标签的时候跟上对应对象的校验和（或者前几位）即可：
+```
+$ git tag -a v1.2 9fceb02
+```
+
+
+### 分享标签
+
+默认情况下， `git push` 并不会把标签传送到远端服务器，只有通过显示命令才能分享标签，比如 `git push origin [tagname]` 即可。
+
+```
+$ git push origin v1.5
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+* [new tag]         v1.5 -> v1.5
+```
+
+如果需要一次推送所有标签，可以使用 `--tags` 选项
+```
+$ git push origin --tags
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+ * [new tag]         v0.1 -> v0.1
+ * [new tag]         v1.2 -> v1.2
+ * [new tag]         v1.4 -> v1.4
+ * [new tag]         v1.4-lw -> v1.4-lw
+ * [new tag]         v1.5 -> v1.5
+```
+
+在 `Github` 里可以从 `release
+
+## 技巧和敲门
+
+### Git命令别名
+
+你想偷懒少输几个字符，可以使用 `Git config` 为命令设置别名：
+```
+$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status
+```
+现在你要输入 `git commit` 时只需要输入 `git ci` 即可。
+
+你甚至可以创造出新的命令
+```
+$ git config --global alias.unstage 'reset HEAD --'
+```
+这样一来下面命令完全相同：
+```
+$ git unstage fileA
+$ git reset HEAD fileA
+```
+
