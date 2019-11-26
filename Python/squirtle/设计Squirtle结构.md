@@ -48,3 +48,5 @@ TODO
 15 rn 和 cordova 生成的 安卓打包文件位置不一样，如何修正？
 
 16 需要修改 `project.pbxproj` 文件
+
+17 生成的 ios 目录也不一样，怎么适配？
