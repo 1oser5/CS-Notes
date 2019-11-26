@@ -93,7 +93,7 @@ MYAPP_RELEASE_STORE_PASSWORD=*****
 MYAPP_RELEASE_KEY_PASSWORD=*****
 ```
 
-好像没感觉上述俩步有时候必要性
+好像没感觉上述俩步有啥必要性
 
 
 ## 把签名配置加入到项目的 gradle 配置中

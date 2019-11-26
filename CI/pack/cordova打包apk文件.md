@@ -315,6 +315,10 @@ cp -r dist/*  ~/zhyl-git/v_cordova/www
 
 好像不需要修改 vue 源文件就可以直接打包，哇终于成功了。
 
+`apk` 文件路径
+```
+/home/zhyl/VisitProject/my_app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+```
 完整流程图
 
-![avator](../pic/cordova打包apk.jpg)
+![avator](../../pic/cordova打包apk.jpg)
