@@ -274,3 +274,23 @@ SyntaxError: invalid syntax
 运行 `yum install xxx` 还是报错，那就直接找到报错的文件，查看其 Python 指向，运行 `vim /usr/libexec/urlgrabber-ext-down`
 
 果不其然它首部为 `#!usr/bin/python`，修改为 `#!/usr/bin/python2.7` 可以正常运行了。
+
+
+## 7.Python实现单例模式
+
+### 装饰器实现
+```python
+def singleton(cls):
+    instance = {}
+    def wrapper(*args, **kwargs):
+        if cls not in instance:
+            instance[cls] = cls(*args, **kwargs)
+        return instance[cls]
+    return wrapper
+@singleton
+class Foo(object):
+    pass
+foo1 = Foo()
+foo2 = Foo()
+print (foo1 is foo2) #True
+```
