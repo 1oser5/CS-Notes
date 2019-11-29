@@ -1,4 +1,4 @@
-+ [2.os.system('cd')问题](2.os.system('cd')问题)
++ [2.os.system('cd')问题](#2.os.system('cd')问题)
 ## 1.if \__name__ == "\__main__" 做了什么 
 
 问题来源：stackoverflow 高分 Python 问题
