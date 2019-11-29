@@ -276,7 +276,7 @@ SyntaxError: invalid syntax
 果不其然它首部为 `#!usr/bin/python`，修改为 `#!/usr/bin/python2.7` 可以正常运行了。
 
 
-## 7.Python实现单例模式
+## 8.Python实现单例模式
 
 ### 装饰器实现
 ```python
