@@ -322,3 +322,11 @@ ZeroDivisionError('integer division or modulo by zero',)
 ```
 + e.message: 获得的信息和 str(e) 一样
 + 采用 `traceback` 模块: 需要导入traceback模块，此时获取的信息最全，与python命令行运行程序出现错误信息一致。使用traceback.print_exc()打印异常信息到标准错误，就像没有获取一样，或者使用traceback.format_exc()将同样的输出获取为字符串。你可以向这些函数传递各种各样的参数来限制输出，或者重新打印到像文件类型的对象。
+```py
+import traceback
+
+try:
+    pass
+except:
+    print(traceback.format_exc())
+```
