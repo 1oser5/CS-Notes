@@ -1,5 +1,5 @@
-+ [2.os.system('cd')问题](#2.os.system('cd')问题)
-## 1.if \__name__ == "\__main__" 做了什么 
+
+## 1. if \__name__ == "\__main__" 做了什么 
 
 问题来源：stackoverflow 高分 Python 问题
 
@@ -7,7 +7,7 @@
 
 
 
-## 2.os.system('cd')问题
+## 2. os.system('cd')问题
 
 今天在公司写自动化打包脚本的时候发现使用`os.system('cd xxx')`命令进行目录切换，十分好奇，去 Google 了以下原由。
 
@@ -31,7 +31,7 @@ os.system 实际上运行了一个子进程，是通过调用 C 标准库中的 
 
 存疑。
 
-## 3.正确理解Python的@staticmethod和@classmethod
+## 3. 正确理解Python的@staticmethod和@classmethod
 
 ```python
 class A(object):
@@ -127,7 +127,7 @@ classmethod 方法和 metaclass 方法是等效的，classmethod 的优先级较
 https://zhuanlan.zhihu.com/p/28010894
 
 
-## 4.如何判断Python的当前版本
+## 4. 如何判断Python的当前版本
 
 ### 使用sys模块
 
@@ -164,7 +164,7 @@ assert minor >= 2
 assert patch >= 1
 ```
 
-## 5.Python字符串类型
+## 5. Python字符串类型
 
 Python中的字符串有两种数据类型：str 类型和 unicode 类型。
 
@@ -195,7 +195,7 @@ print repr(u2) # u'\u6c49'
 3.对于文件读写的操作，建议适用 codecs.open() 代替内置的 open()，遵循一个原则，用哪种格式写，就用哪种格式读。
 
 
-## 6.Python类中的super().__init__()
+## 6. Python类中的super().__init__()
 
 
 ```python
@@ -248,7 +248,7 @@ if __name__ == '__main__':
 如果是多继承，则继承中super的调用顺序是与 `MRO-C3` 的类方法查找顺序一样的。
 
 
-## 7.Centos安装Python3之后yum无法正常使用
+## 7. Centos安装Python3之后yum无法正常使用
 
 
 ```
@@ -276,7 +276,7 @@ SyntaxError: invalid syntax
 果不其然它首部为 `#!usr/bin/python`，修改为 `#!/usr/bin/python2.7` 可以正常运行了。
 
 
-## 8.Python实现单例模式
+## 8. Python实现单例模式
 
 ### 装饰器实现
 ```python
@@ -294,3 +294,31 @@ foo1 = Foo()
 foo2 = Foo()
 print (foo1 is foo2) #True
 ```
+
+## 9. Python中的获得异常信息
+
+异常信息的捕获对于程序的调试非常重要，有助于快速定位错误，Python 常用的捕获异常语法为 `try...except...`
+
+结构如下
+
+```python
+try:
+    pass
+except Exception as e:
+    pass
+
+```
+你可以在 `except` 部分输出错误信息
+
+可以选择打印出不同的错误信息
+
++ str(e): 返回字符串类型，只给出异常信息，但不包括异常信息的类型
+```py
+'integer division or modulo by zero'
+```
++ repr(e): 给的信息比较全，包含异常信息类型
+```py
+ZeroDivisionError('integer division or modulo by zero',)
+```
++ e.message: 获得的信息和 str(e) 一样
++ 采用 `traceback` 模块: 需要导入traceback模块，此时获取的信息最全，与python命令行运行程序出现错误信息一致。使用traceback.print_exc()打印异常信息到标准错误，就像没有获取一样，或者使用traceback.format_exc()将同样的输出获取为字符串。你可以向这些函数传递各种各样的参数来限制输出，或者重新打印到像文件类型的对象。
