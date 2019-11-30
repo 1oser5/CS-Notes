@@ -993,4 +993,231 @@ $ git reset HEAD fileA
 
 Git 分支管理的轻便让他在一众版本控制系统中脱颖而出。
 
-在 Git 提交时，会保存一个提交（commit）对象，它包含一个指向暂存内容快照的指针，包含本次提交的作者等相关附属信息，包含零个或多个指向该提交对象的父对象指针：首次提交没有直接祖先，普通提交有一个祖先，有两个或者多个分支合并的提交有多个祖先
+在 Git 提交时，会保存一个提交（commit）对象，它包含一个指向暂存内容快照的指针，包含本次提交的作者等相关附属信息，包含零个或多个指向该提交对象的父对象指针：首次提交没有直接祖先，普通提交有一个祖先，有两个或者多个分支合并的提交有多个祖先。
+
++ commit 对象：存储 tree 对象，以及其他提交元数据（作者，提交者等）。
++ tree 对象：存储 blob 对象，一个 blob 对象对应一个校验和。
+
++ blob 对象：文件快照内容。
+
+仓库中各个对象保存的数据和相互关系看起像如图 3-1
+
+![avator](../../pic/progit-data-struction.png)
+
+commit 对象会包含一个指向上次提交的指针。
+
+![avator](../../pic/progit-commit-parent.png)
+
+分支其实就是一个默认指向最新 commit 的指针，Git 会使用 master 作为分支的默认名字。
+
+![avator](../../pic/progit-commit-branch.png)
+
+Git 新建分支可以使用 `git branch` 命令。
+```shell
+git branch testing
+```
+
+这会在当前 commit 对象上新建一个分支指针。
+
+![avator](../../pic/progit-add-branch.png)
+
+Git 通过一个叫 `HEAD` 的特殊指针，来告诉你你目前在哪个分支工作。如果你仅仅只是新建了分支，Git 不会把你的当前的工作目录切换成分支，你依然在 master 分支工作。
+gitp
+
+![avator](../../pic/progit-still-in-master.png)
+
+使用 `git checkout` 命令切换分支
+```
+git checkout testing
+```
+
+切换到 testing 分支之后进行一次提交，那么历史记录看上去会是这样
+
+![avator](../../pic/progit-commit-on-testing.png)
+
+我们会到 master 分支，作出修改后提交，然后我们的提交历史就出现了分叉。
+
+![avator](../../pic/progit-diff-branch.png)
+
+也就是说切换分支的操作，只需要 `git checkout` 和 `git brance` 就可以完成。
+
+
+与别的版本控制系统不同的是，Git 的分支实际上仅仅是一个包含了所指对象校验和（40 个字符长度 SHA-1 字串）的文件，所以创建和销毁分支操作十分简单
+
+## 分支的新建与合并
+
+比如一个已经上线的项目，你需要更新一些新的需求，你可以新建一个分支，在需求通过测试之后，合并回主分支。
+
+### 分支的切换与新建
+
+假设我们在完成一个项目，做了几次提交
+
+![avator](../../pic/pro-git-little-commit.png)
+
+现在你需要修补 #53 的问题，要新建并切换到该分支
+```
+git checkout -b iss53
+```
+
+上述命令相当于执行下面俩个命令
+```
+git branch iss53
+git checkout iss53
+```
+
+![avator](../../pic/porgit-branch-iss53.png)
+
+当你在 `iss53` 分支干的热火朝天的时候，你老板打电话来让你紧急修复一下 `master` 分支上的某个 bug。
+
+因此我们要先切换到 `master` 分支，再运行
+```
+git checkout -b hoxift
+```
+在进行快速修复之后，你提交了记录
+
+![avator](../../pic/progit-commit-on-hotfix.png)
+
+之后你需要将其合并到 `master` 分支，并发布到服务器，使用 `git merge` 命令来进行合并
+```
+$ git checkout master
+$ git merge hotfix
+Updating f42c576..3a0874c
+Fast-forward
+ README | 1 -
+ 1 file changed, 1 deletion(-)
+```
+
+注意合并的时候出现了 "Fast forward" 提示，由于当前 `master` 分支所在的提交对象是要并入 `hotfix` 分支的上游，Git 只需要把 `master` 分支指针直接右移。
+
+如果可以直接顺着一个分支走到达另一个分支的话，Git 在合并二者时，就会简单的把指针右移，因为这种单线的历史分支不要解决任何分歧，这种操作就被称为**快进 （Fast forward）**。
+
+合并后历史记录变成了这样
+
+![avator](../../pic/progit-merge-hotfix.png)
+
+
+`hotfix` 已经完成了它的使命，你可以将他删除了，使用 `git branch -d` 选项删除。
+
+```
+$ git branch -d hotfix
+Deleted branch hotfix (was 3a0874c).
+```
+
+![avator](../../pic/progit-finish-del.png)
+
+现在 `hotfix` 的修改内容还未包含到 `iss53` 中，你可以使用 `git merge master` 把分支合并到 `iss53`
+
+### 分支的合并
+
+当你完成 `iss53` 的工作之后，你需要将其合并到 `master`,只需要回到 `master` 分支，运行 `git merge` 命令指定要合并的分支。
+
+```
+$ git checkout master
+$ git merge iss53
+Auto-merging README
+Merge made by the 'recursive' strategy.
+ README | 1 +
+ 1 file changed, 1 insertion(+)
+```
+
+这次合并操作的底层实现有别于之前 `hotfix` 的并入方式。
+
+由于当前的 `master` 并非 hotfix 的祖先，所以 Git 需要找到他们的共同祖先进行三方合并计算。
+
+![avator](../../pic/progit-find-ancestor.png)
+
+Git 会为分支合并自动识别出最佳的同源合并点。
+
+在合并成功之后，提交记录变成这样，Git 自动创建并包含了合并结果的提交对象 C6，它比较特殊，拥有两个祖先。
+
+![avator](../../pic/progit-two-ancetors.png)
+
+### 遇到冲突时的分之合并
+
+如果你在 hotfix 和 master 中都修改了同一文件的同一部分，那么合并冲突就没按么简单了，你会得到类似下面结果：
+```shell
+$ git merge iss53
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+```
+Git 做了合并但没有提交，他在等你解决冲突，如果你想查看哪些文件冲突，使用 `git status`
+
+```
+$ git status
+On branch master
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+
+        both modified:      index.html
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+任何包含未解决冲突的文件都会以 **未合并（unmerged）** 的状态列
+出。
+```python
+<<<<<<< HEAD
+<div id="footer">contact : email.support@github.com</div>
+=======
+<div id="footer">
+  please contact us at support@github.com
+</div>
+>>>>>>> iss53
+```
+
+使用 `=======` 隔开的上半部，就是当前分支，即 `HEAD` 所在。下面是你想要合并分支的内容。
+
+你需要进行二选一，或者修改其中之一。
+
+## 分支的管理
+
+使用 `git branch` 不添加任何参数，会列出所有分支的清单
+```
+$ git branch
+  iss53
+* master
+  testing
+```
+带 * 字符表示当前所在分支。
+
+使用参数 `-v` 查看各分支最后一次提交信息，运行 `git branch -v`
+```
+$ git branch -v
+  iss53   93b412c fix javascript issue
+* master  7a98805 Merge branch 'iss53'
+  testing 782fd34 add scott to the author list in the readmes
+```
+
+你可以使用 `--merged` 和 `--no-merged` 选项进行分支的筛选，比如查看已经被并入当前分支的分支
+```
+$git branch --merged
+iss53
+* master
+```
+
+如果你想强制删除那些未被合并的分支，使用 `-D` 参数强制删除。
+```
+$ git branch -D testing
+```
+
+## 利用分支进行开发的工作流程
+
+### 长期分支
+
+许多使用 Git 的开发者都喜欢用这种方式来开展工作，比如仅在 master 分支中保留完全稳定的代码，即已经发布或即将发布的代码。与此同时，他们还有一个名为 develop 或 next 的平行分支，专门用于后续的开发，或仅用于稳定性测试 — 当然并不是说一定要绝对稳定，不过一旦进入某种稳定状态，便可以把它合并到 master 里。这样，在确保这些已完成的特性分支（短期分支，比如之前的 iss53 分支）能够通过所有测试，并且不会引入更多错误之后，就可以并到主干分支中，等待下一次的发布。
+
+![avator](../../pic/progit-long-branch.png)
+
+使用流水线可能可以更好理解
+
+![avator](../../pic/progit-long-branch-waterflow.png)
+
+### 特性分支
+
+在任何规模的项目中都可以使用特性（Topic）分支。一个特性分支是指一个短期的，用来实现单一特性或与其相关工作的分支。可能你在以前的版本控制系统里从未做过类似这样的事情，因为通常创建与合并分支消耗太大。然而在 Git 中，一天之内建立、使用、合并再删除多个分支是常见的事。
+
+![avator](../../pic/progit-topic-branch.png)
