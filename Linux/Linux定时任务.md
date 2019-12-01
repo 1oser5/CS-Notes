@@ -32,3 +32,24 @@ crontab -e
 # *  *  *  *  * command to be executed
 
 ```
+
+如果你想看那你有哪些定时任务，可以使用 `crontab -l` 命令。
+
+再增加了 `crontab` 任务之后，在 `var/spool/cron` 目录下会有一个当前**登录账号命名**的文件，该文件内容就是添加的 `crontab` 任务。
+```
+$ cat /var/spool/cron/root 
+*/1 * * * * /dd/shell/test1.sh
+*/1 * * * * /dd/shell/test2.sh
+```
+你可以手动修改文件内容，进行定时任务的修改或者删除
+
+也可以使用 `sed` 命令来处理该文件，比如删除含有 `test2.sh` 的行的内容
+```
+$ sed -i 'test2.sh/d' /var/spool/cron/root 
+```
+删除crontab内容空白行
+
+在执行上述命令之后，你会发现 `crontab -l` 多处一行空白，如果你想删除它，执行 
+```
+$ sed -i '/^$/d' /var/spool/cron/root
+```
