@@ -66,7 +66,8 @@ TODO
 
 ### vue2apk done
 ### rn2apk done
-### rn2ipa done
+
+
 
 
 发现 vue 和 rn 的 project.pbxproj 文件设置不一样，project.pbxproj 可以通过右键 xxx.xcodeproj，选择显示包内容打开。
@@ -83,3 +84,14 @@ DevelopmentTeam = 打包team编号
 DEVELOPMENT_TEAM = 打包team编号
 ```
 如何找到位置成了关键
+
+
+使用 pbxproj 第三方库解析 pbxproj，这就是 python 语言的特点，啥第三方库都找到
+
+我现在比较担心的就是 rn 和 vue 的 project.pbxproj 的目录机构不一样，得再找一遍也太难了吧。
+
+这个文件里的变量名全部是乱码，真的恶心人。只能通过自己一层一层的剥离找到自己想要的变量的 key 值
+
+vue 的 teamid 添加成功了，但是还有一个问题就是在使用 cordova 打包的时候，是没具体设置为 iphone developer 的
+
+看看能不能修改 sign 方式为手动，修复这个问题，还是修改 pbxproj 可以修改这个问题！
