@@ -67,3 +67,19 @@ TODO
 ### vue2apk done
 ### rn2apk done
 ### rn2ipa done
+
+
+发现 vue 和 rn 的 project.pbxproj 文件设置不一样，project.pbxproj 可以通过右键 xxx.xcodeproj，选择显示包内容打开。
+
+vue2ios的，需要修改两处地方，230行和362
+
+230行需要添加
+```
+DevelopmentTeam = 打包team编号
+```
+
+362 行需要添加
+```
+DEVELOPMENT_TEAM = 打包team编号
+```
+如何找到位置成了关键
