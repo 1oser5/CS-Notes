@@ -66,7 +66,7 @@ TODO
 
 ### vue2apk done
 ### rn2apk done
-
+### rn2ipa done
 
 
 
@@ -95,3 +95,5 @@ DEVELOPMENT_TEAM = 打包team编号
 vue 的 teamid 添加成功了，但是还有一个问题就是在使用 cordova 打包的时候，是没具体设置为 iphone developer 的
 
 看看能不能修改 sign 方式为手动，修复这个问题，还是修改 pbxproj 可以修改这个问题！
+
+又报了个 pod install 的错误，但是我之前明明pod install 过了，只是当时什么都没装上，我在 clean 之后增加一个 pod install 试试看。
