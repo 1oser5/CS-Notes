@@ -1221,3 +1221,159 @@ $ git branch -D testing
 在任何规模的项目中都可以使用特性（Topic）分支。一个特性分支是指一个短期的，用来实现单一特性或与其相关工作的分支。可能你在以前的版本控制系统里从未做过类似这样的事情，因为通常创建与合并分支消耗太大。然而在 Git 中，一天之内建立、使用、合并再删除多个分支是常见的事。
 
 ![avator](../../pic/progit-topic-branch.png)
+
+## 远程分支
+
+远程分支存储在远程仓库中，一般使用 (`远程仓库名/分支名`)这样的形式表示远程分支。
+当你进行克隆的时候，默认把远程仓库的 `master` 分支和你本地 ``master` 分支关联。
+
+![avator](../../pic/progit-git-clone.png)
+
+可以使用 `git fetch origin` 来同步远程服务器上的数据到本地。
+
+![avator](../../pic/progit-git-fecth-origin.png)
+
+### 推送本地分支
+
+如果你需要有一个分支和他人一起开发，可以运行 `git push (远程仓库名)（分支名）`
+
+```
+$ git push origin serverfix
+Counting objects: 20, done.
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (15/15), 1.74 KiB, done.
+Total 15 (delta 5), reused 0 (delta 0)
+To git@github.com:schacon/simplegit.git
+ * [new branch]      serverfix -> serverfix
+```
+实际上这里走了一点捷径，Git 自动吧 `serverfix` 分支名扩展为 
+`ref/heads/serverfix:refs/heads/serverfix`，意为“取出我本地的 serverfix 分支，推送到远程仓库的 serverfix 分支中去”。
+
+你也可以使用 `git push origin serverfix:serverfix` 来实现相同效果，意为“上传我本地的 serverfix 分支到远程仓库中，仍叫他 serverfix 分支”。因此，如果你想把远程分支叫做 `awesomebranch` 可以使用 `git push origin serverfix:aswesomebranch` 来推送数据。
+
+这样其他开发者再次从服务器上获得数据的实时，他们将得到一个新的远程分支 `origin/serverfix`。并指向服务器上的 `serverfix`。
+```
+$ git fetch origin
+remote: Counting objects: 20, done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 15 (delta 5), reused 0 (delta 0)
+Unpacking objects: 100% (15/15), done.
+From git@github.com:schacon/simplegit
+ * [new branch]      serverfix    -> origin/serverfix
+```
+
+需要注意的是，你无法在本地编辑该分支，你需要将该远程分支合并到当前分支或者分化一个新分支来进行开发。
+
+合并到当前分支
+```
+git merge origin/serverfix
+```
+分化新分支
+```
+git checkout -b serverfix origin/serverfix
+```
+
+### 跟踪远程分支
+
+从远程分支里 `checkout` 出来的本地分支，称为 **跟踪分支（tracking branch）**。在追踪分支里输入 `git push`，Git 会自行判断应该向哪个服务器的哪个分支推送数据。
+
+
+当你进行克隆的时候，默认把远程仓库的 `master` 分支和你本地 ``master` 分支关联。这就是为什么一开始 `git pull` 和 `git push` 就能使用的原因。
+
+如果你有 1.6.2 以上版本的 Git，还可以使用 `--track` 选项简化
+```
+$ git checkout --track origin/serverfix
+Branch serverfix set up to track remote branch serverfix from origin.
+Switched to a new branch 'serverfix'
+```
+
+要为本地分支设定不同于远程分支的名字，只需要在第一个版本的命令里换个名字
+```
+$ git checkout -b sf origin/serverfix
+Branch sf set up to track remote branch serverfix from origin.
+Switched to a new branch 'sf'
+```
+
+现在你的本地分支 `sf` 会自动将推送和抓取数据的位置定位到 `origin/serverfix` 了。
+
+### 删除远程分支
+
+非常无厘头的命令来删除远程分支
+```
+git push origin :serverfix
+```
+
+有种方便记忆这条命令的方法：记住我们不久前见过的 git push [远程名] [本地分支]:[远程分支] 语法，如果省略 [本地分支]，那就等于是在说“在这里提取空白然后把它变成[远程分支]”。
+
+## 分支的衍合
+
+把一个分支的修改整合到另一个分支的方法有两种：`merge` 和 `rebase`（暂时翻译为“衍合”）
+
+
+### 基本的衍合操作
+
+当我们有俩个不同分支时
+
+![avator](../../pic/progit-reabase-show.png)
+
+最容易的整合方式是 `merge`，他会把两个分支最新的快照以及二者的共同祖先进行三方合并，产生一个新的提交对象（C5）
+
+![avator](../../pic/progit-rebase-merge.png)
+
+其实还有另一种选择，你把在 C3 里的变化补丁在 C4 的基础上重新再打一遍，这就叫做 衍合（rebase），这样可以把一个分支里的提交改变移到另一个分支里重放一遍。
+
+上述例子运行
+```
+$ git checkout experiment
+$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: added staged command
+```
+
+其原理的回到两个分支的共同祖先，根据需要衍合的分支生成一系列补丁，然后以基地分支最后一个提交对象为新出发点，逐个应用之前准备好的补丁，最后生成一个新的合并提交对象 C3，改写 `experiment` 的提交记录，使它成为 `master` 的直接下游。
+
+![avator](../../pic/progit-show-rebase.png)
+
+衍合的目的可以让远程仓库拥有一个比较整洁的提交历史
+
+### 有趣的衍合
+
+衍合也可以放到其他分支进行，并不一定非得根据分化之前的分支。
+
+![avator](../../pic/progit-client-server.png)
+
+你想把 client 分支合并会主分支，但是 server 分支还有待测试，那么你可以通过 `git rebase` 的 `--onto` 指定基底分支 `master`。
+
+```
+$ git rebase --onto master server client
+```
+
+这好比再说 “取出 client 分支，找出 server 和 client 分支共同祖先之后的变化，把他们在 master 重现一遍”。
+
+![avator](../../pic/progit-rebase-client.png)
+
+现在只需要快进 `master` 分支即可
+```
+$ git checkout master
+$ git merge client
+```
+
+![avator](../../pic/progit-fast-master.png)
+
+
+现在决定把 `server` 分支的变化也包含进来，我们可以直接把 `server` 分支衍合到 `master`，而不用手动切换到 `server` 再继续衍合，`git rebase [主分支] [特性分支]`会先取出特性分支，在主分支上重演。
+```
+$ git rebase master server
+```
+
+![avator](../../pic/progit-rebase-server.png)
+
+然后就可以快进 `master`，再删除 `client` 和 `server` 分支。
+
+### 衍合的风险
+
+**一旦分支中的提交对象发布到公共仓库，就千万不要对该分支进行操作！！**
+
+在进行衍合的时候，实际上抛弃了一些现存的提交对象而创造了一些类似但不同的新的提交对象。如果你把原来分支中的提交对象发布出去，并且其他人更新下载后在其基础上开展工作，而稍后你又用 git rebase 抛弃这些提交对象，把新的重演后的提交对象发布出去的话，你的合作者就不得不重新合并他们的工作，这样当你再次从他们那里获取内容时，提交历史就会变得一团糟。
+
+如果有人的修改是基于你的分支，而你把这些分支进行 `rebase` 之后，他们就不得不重新进行一次 `merge` 操作，以为 `reabse` 虽然有类似的结构，但是 SHA-1 校验值完全不同。
