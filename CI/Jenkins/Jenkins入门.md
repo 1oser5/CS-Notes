@@ -48,7 +48,7 @@ java -jar /Applications/Jenkins/jenkins.war
 # 创建第一个 Pipeline
 
 ## 什么是 Jenkins Pipeline?
-Pipe'li'ne 是一套插件，将持续交付的实现和实施集成到 Jenkins 中。
+Pipeline 是一套插件，将持续交付的实现和实施集成到 Jenkins 中。
 
 Pipeline 的定义通常被写入到一个文本文件中（称为 Jenkinsfile），该文件可以被放入源代码控制库中。
 
@@ -175,7 +175,7 @@ pipeline{
 
 # 记录测试和构建结果
 
-Jenkins 可以记录汇总测试结果，其通常和 junit步骤捆绑使用，一般写在 post 部分。
+Jenkins 可以记录汇总测试结果，其通常和 junit 步骤捆绑使用，一般写在 post 部分。
 
 ```python
 post{
