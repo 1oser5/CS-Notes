@@ -1944,3 +1944,223 @@ $ git blame -L 12,22 simplegit.rb
 ```
 
 第一个域是最后一次修改该行的那次提交的 SHA-1 值，接下去的两个域是从那次提交中抽取的值--作者和日期。前面带 `^` 表示是第一次出现，从那之后未被修改过。
+
+有一个很酷的东西就是他会记录所有的代码移动，如果您在 `git blame` 后面加上 `-c`，Git会帮你分析标注文件然后尝试找出其中的代码原始出处。
+
+### 二分查找
+
+可以使用二分查找快速进行错误定位，运行 `git bisect`
+
+你需要用 `git bisect strat` 启动，然后用 `git bisect bad` 来告诉系统当前的提交已经有问题了。同时你必须告诉 `bisect` 已知的最后一次正常提交是那次，使用 `git bisect good [good_commit]`。
+```
+$ git bisect start
+$ git bisect bad
+$ git bisect good v1.0
+Bisecting: 6 revisions left to test after this
+[ecb6e1bc347ccecc5f9350d878ce677feb13d3b2] error handling on repo
+```
+
+他会提供你一个在错误和正常版本之间的区间，它取出一个，你可以对这个版本进行测试，如果没有问题，那么就是在这个之后引入的。如果这个版本没有错误，你需要通过 `git bisect good` 来告诉 Git 然后继续。
+
+如果这个版本是错误的，输入 `git bisect bad`，来告诉 Git。
+
+当你完成之后，使用 `git bisect rest` 重设你的 HEAD 到你开始的地方。
+
+如果您有一个工作运行的脚本，正常时返回零，错误时返回非零，那么完全可以使用它来自动定位，你只需要提供一直错误和正确提交来告诉它二分查找的范围。
+```
+$ git bisect start HEAD v1.0
+$ git bisect run test-error.sh
+```
+
+## 子模块
+
+经常会有在你的仓库中有使用别的第三方库或者别的项目的时候，你可以使用管理工具进行安装，但是不容易部署。如果你将代码复制到那你的仓库，那么上游被修改时，你的定制化修改会难以合并。
+
+Git 通过子模块处理这个问题，其允许你将一个 Git 仓库当做另一个 Git 仓库的子目录，允许你克隆另一个仓库到你的项目中并保持提交的相对独立。
+
+### 子模块初步
+
+假设你向把 Rack 库加入到你的项目，既要保持你的更改，又要延续上游的变更，使用 `git submodule add` 将外部项目加为子模块
+```
+$ git submodule add git://github.com/chneukirchen/rack.git rack
+Initialized empty Git repository in /opt/subtest/rack/.git/
+remote: Counting objects: 3181, done.
+remote: Compressing objects: 100% (1534/1534), done.
+remote: Total 3181 (delta 1951), reused 2623 (delta 1603)
+Receiving objects: 100% (3181/3181), 675.42 KiB | 422 KiB/s, done.
+Resolving deltas: 100% (1951/1951), done.
+```
+
+现在你就在项目里的rack子目录下有了一个 Rack 项目，在你加入子模块后立即运行 `git status`，会看到下面两项
+
+```
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#      new file:   .gitmodules
+#      new file:   rack
+#
+```
+
+有一个 `.gitmodules` 文件，它保存了项目 URL 和你拉取到本地的子目录。
+```
+$ cat .gitmodules
+[submodule "rack"]
+      path = rack
+      url = git://github.com/chneukirchen/rack.git
+```
+如果你有多个子目录，这个文件里会有多条。同时该文件也是处于版本控制之下的。
+
+如果你在提交时，不在那个子模块目录，则不会记录它的内容，Git 会把他记录成来自那个仓库的一个特殊提交。当你修改子目录并提交时，子项目会通知那里的 HEAD 已经改变并记录你当前正在工作的那个提交、
+
+当你提交时，会看到类似下面：
+```
+$ git commit -m 'first commit with submodule rack'
+[master 0550271] first commit with submodule rack
+ 2 files changed, 4 insertions(+), 0 deletions(-)
+ create mode 100644 .gitmodules
+ create mode 160000 rack
+```
+
+注意 rack 条目的 160000 模式。这在Git中是一个特殊模式，基本意思是你将一个提交记录为一个目录项而不是子目录或者文件。
+
+你可以将 `rack` 目录当做一个独立的项目，保持一个指向子目录的最新提交的指针，所有 Git 命令都在俩个子目录里独立工作。
+
+```
+$ git log -1
+commit 0550271328a0038865aad6331e620cd7238601bb
+Author: Scott Chacon <schacon@gmail.com>
+Date:   Thu Apr 9 09:03:56 2009 -0700
+
+    first commit with submodule rack
+$ cd rack/
+$ git log -1
+commit 08d709f78b8c5b0fbeb7821e37fa53e69afcf433
+Author: Christian Neukirchen <chneukirchen@gmail.com>
+Date:   Wed Mar 25 14:49:04 2009 +0100
+
+    Document version change
+```
+
+### 克隆一个带子模块的项目
+
+如果你克隆了一个带子模块的项目，你将得到包含子模块的目录，但里面没有文件
+```
+$ git clone git://github.com/schacon/myproject.git
+Initialized empty Git repository in /opt/myproject/.git/
+remote: Counting objects: 6, done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 6 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (6/6), done.
+$ cd myproject
+$ ls -l
+total 8
+-rw-r--r--  1 schacon  admin   3 Apr  9 09:11 README
+drwxr-xr-x  2 schacon  admin  68 Apr  9 09:11 rack
+$ ls rack/
+$
+```
+你需要运行如下两个命令，`git submodule init` 来初始化你的本地配置文件，`git submodule update` 来从那个项目拉去所有的数据并检出你上层项目所列出的合适的提交
+```
+$ git submodule init
+Submodule 'rack' (git://github.com/chneukirchen/rack.git) registered for path 'rack'
+$ git submodule update
+Initialized empty Git repository in /opt/myproject/rack/.git/
+remote: Counting objects: 3181, done.
+remote: Compressing objects: 100% (1534/1534), done.
+remote: Total 3181 (delta 1951), reused 2623 (delta 1603)
+Receiving objects: 100% (3181/3181), 675.42 KiB | 173 KiB/s, done.
+Resolving deltas: 100% (1951/1951), done.
+Submodule path 'rack': checked out '08d709f78b8c5b0fbeb7821e37fa53e69afcf433'
+```
+
+现在你的rack子目录就处于你先前提交的确切状态了。如果另外一个开发者变更了 rack 的代码并提交，你拉取那个引用然后归并之，将得到稍有点怪异的东西：
+
+```
+$ git merge origin/master
+Updating 0550271..85a3eee
+Fast forward
+ rack |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+[master*]$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#      modified:   rack
+#
+```
+你归并的仅仅是一个指向子模块的指针，但不更新你子模块目录的代码，如果你要更新，运行 `git submodule update`
+
+一个常见问题是，开发者对子模块进行了本地修改但是没有推送到广告费完全，然后提交了一个非公开状态的指针然后推送上层项目时，当其他开发者试图运行 `git submodule update`，那个子模块就会找不到引用，你会看到类似错误
+```
+$ git submodule update
+fatal: reference isn’t a tree: 6c5e70b984a60b3cecd395edd5b48a7575bf58e0
+Unable to checkout '6c5e70b984a60b3cecd395edd5ba7575bf58e0' in submodule path 'rack'
+```
+
+这个时候你需要去查看一下到底谁最后变更了子模块
+```
+$ git log -1 rack
+commit 85a3eee996800fcfa91e2119372dd4172bf76678
+Author: Scott Chacon <schacon@gmail.com>
+Date:   Thu Apr 9 09:19:14 2009 -0700
+
+    added a submodule reference I will never make public. hahahahaha!
+```
+然后发送电子邮件臭骂他一顿。
+
+## 子树合并
+
+如果你并归的是两个分支，Git 采取递归策略。如果是多个分支，则采取章鱼策略。你可以是子树归并来处理子项目问题。
+
+其思想上，你拥有两个项目，其中一个项目映射到另一个项目的子目录中。
+
+你需要将 Rack 应用加入项目，并且添加对应的分支
+```
+$ git remote add rack_remote git@github.com:schacon/rack.git
+$ git fetch rack_remote
+warning: no common commits
+remote: Counting objects: 3184, done.
+remote: Compressing objects: 100% (1465/1465), done.
+remote: Total 3184 (delta 1952), reused 2770 (delta 1675)
+Receiving objects: 100% (3184/3184), 677.42 KiB | 4 KiB/s, done.
+Resolving deltas: 100% (1952/1952), done.
+From git@github.com:schacon/rack
+ * [new branch]      build      -> rack_remote/build
+ * [new branch]      master     -> rack_remote/master
+ * [new branch]      rack-0.4   -> rack_remote/rack-0.4
+ * [new branch]      rack-0.9   -> rack_remote/rack-0.9
+$ git checkout -b rack_branch rack_remote/master
+Branch rack_branch set up to track remote branch refs/remotes/rack_remote/master.
+Switched to a new branch "rack_branch"
+```
+
+现在你的 `rack_branch` 分支有了 Rack 项目的根目录，而你自己的项目则在 `master` 中，他们有着不同的项根目录。
+
+使用 `git read-tree` 将 Rack 项目当做子目录拉取到 master 项目中
+```
+$ git read-tree --prefix=rack/ -u rack_branch
+```
+看起来就像你在那个子目录拥有 Rack 文件，如果 Rack 项目更新，你可以通过切换到那个分支，并拉取上游的变更。
+```
+$ git checkout rack_branch
+$ git pull
+```
+
+你需要把这些变更归并到你的 master 分支，你可以使用 `git merge -s subtree`，但如果这样 Git 会把历史也并归到一起，这可不是我们想要的，需要添加 `--squash` 和 `--no-commit` 选项。
+
+```
+$ git checkout master
+$ git merge --squash -s subtree --no-commit rack_branch
+Squash commit -- not updating HEAD
+Automatic merge went well; stopped before committing as requested
+```
+
+运行 `git diff-tree` 比较分支和 rack 子目录的区别
+```
+$ git diff-tree -p rack_branch
+```
