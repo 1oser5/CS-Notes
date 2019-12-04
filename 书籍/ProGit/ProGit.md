@@ -2164,3 +2164,181 @@ Automatic merge went well; stopped before committing as requested
 ```
 $ git diff-tree -p rack_branch
 ```
+
+# 自定义Git
+
+## 配置Git
+
+### core.editor
+
+Git 默认调用你环境变量的 editor 定义的值作为文本编辑器，默认会用 Vi，你可以使用 `core.editor` 改变默认编辑器
+```
+$ git config --global core.editor emacs
+```
+
+### commit.template
+
+如果把此项定为你系统的一个文件，当你提交时，Git 会默认使用该文件定义的内容，比如你创建了一个模版文件 `$HOME/.gitmessage.txt`,看起来像这样。
+```
+subject line
+
+what happened
+
+[ticket: X]
+```
+
+当你设置 `commit.template` 时，运行 `git commit`，Git 会在你的编辑器上显示以上内容
+```
+$ git config --global commit.template $HOME/.gitmessage.txt
+$ git commit
+```
+
+当你提交时，编辑器会显示
+```
+subject line
+
+what happened
+
+[ticket: X]
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+# modified:   lib/test.rb
+#
+~
+~
+".git/COMMIT_EDITMSG" 14L, 297C
+```
+
+### core.pager
+
+设置分页，默认使用 `less`，如果你设置为空字符，则所有内容都会显示在一行
+```
+$ git config --global core.pager ''
+```
+
+### user.signingkey
+要创建签署的含附注的标签，那么把你的 GPG 签署密钥设为配置项会更好，格式如下
+```
+$ git config --global user.signingkey <gpg-key-id>
+
+```
+
+现在你可以这样签署标签
+```
+$ git tag -s <tag-name>
+```
+
+### core.excludesfile
+
+如果你想在项目外定义 Git 忽略哪些文件，使用设置该参数。
+
+### help.autocorrect
+
+只有在 Git 1.6 以上生效，如果将其设为 1（启动自动修正），则只有一个命令被模糊匹配到时，Git 会自动运行该命令。
+
+### Git中的着色
+
+#### color.ui
+设置 color.ui 为 true 为所有的默认终端着色
+```
+$ git config --global color.ui true
+```
+
+#### color.*
+可以具体设置着色内容，有下列命令可以设置颜色
+```
+color.branch
+color.diff
+color.interactive
+color.status
+```
+
+上述各命令都有子选项，来覆盖区辐射值，例如，让 diff 输出的改变信息以粗体、蓝色前景和黑色背景显示：
+```
+$ git config --global color.diff.meta “blue black bold”
+```
+
+具体配置信息请参考 `git config`
+
+### core.autocrlf
+
+用来处理 Windows 系统和 Linux 系统之间换行符不同的问题，如果在 windows 系统上，把他设置为 True，这样代码迁出的时候，LF 会被自动换成 CRL。
+```
+$ git config --global core.autocrlf true
+```
+
+如果是 Liunx 系统，将其设置为`iput`，则提交时 CRLF 转换为 LF，签出时不转换
+```
+$ git config --global core.autocrlf input
+```
+
+## Git属性
+
+Git 的一些设置项可以被用于特定的路径中，这被称为 Git 属性，可以在你的目录中的 `.gitattributes` 文件进行设置，通常在你的项目的该命令，当你不想让和项目文件一起提交时，在 `.git/info/attributes` 进行设置。
+
+### 二进制文件
+
+
+#### 识别二进制
+
+比如 Xcode 项目中有以 `.pbxproj` 结尾的文件，他是一个 JSON 数据集。你如果想要 Git 把所有的类似文件当做二进制文件，来进行识别和操作，在 `.gitattributes` 文件中设置
+```
+*.pbxproj -crlf -diff
+```
+
+在 Git 1.6 版本之后，可以用一个宏替代 `-crlf -diff`
+```
+*.pbxproj binary
+```
+
+#### MS Word files
+
+如果你相比较两个不同版本的 Word 文件，运行 `git diff` 只能得到如下结果
+```
+$ git diff
+diff --git a/chapter1.doc b/chapter1.doc
+index 88839c4..4afcb7c 100644
+Binary files a/chapter1.doc and b/chapter1.doc differ
+```
+你可以在 `.gitattributes` 文件加入
+```
+*.doc diff=word
+```
+如果后缀是 `.doc`，Git 会使用 word 过滤器，其实就是 Git 使用 strings 程序把文档转化为可读的文本文件后进行比较
+
+#### Image files
+
+你可以使用这个方法比较图片，当你平时比较图片时，会提炼出大量 exif 的信息。如果你下载并安装了 `exiftool` 程序，其会参照元数据把图像转换成文本，比较的不同结果会用文本展示
+```
+$ echo '*.png diff=exif' >> .gitattributes
+$ git config diff.exif.textconv exiftool
+```
+运行 `git diff` 结果
+```
+diff --git a/image.png b/image.png
+index 88839c4..4afcb7c 100644
+--- a/image.png
++++ b/image.png
+@@ -1,12 +1,12 @@
+ ExifTool Version Number         : 7.74
+-File Size                       : 70 kB
+-File Modification Date/Time     : 2009:04:17 10:12:35-07:00
++File Size                       : 94 kB
++File Modification Date/Time     : 2009:04:21 07:02:43-07:00
+ File Type                       : PNG
+ MIME Type                       : image/png
+-Image Width                     : 1058
+-Image Height                    : 889
++Image Width                     : 1056
++Image Height                    : 827
+ Bit Depth                       : 8
+ Color Type                      : RGB with Alpha
+```
+
+### 关键词扩展
+
+你可以使用一些关键字配合脚本来进行关键字替换，GIt 提供了两种过滤器，分别是在文件迁出前（smudge）和提交到暂存区前（clean）
