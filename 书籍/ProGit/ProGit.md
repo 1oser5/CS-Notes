@@ -1449,3 +1449,251 @@ HTTP 协议也可以用来推送，但这种做法不常见。
 
 + 传输开销大，速度慢
 + 没有服务端的动态计算--因此 HTTP 协议经常被称为傻瓜（dumb）协议。
+
+
+## 生成 SSH 公钥
+
+大多数 Git 服务器都是要 SSH 公钥进行授权，SSH 公钥默认存储在主目录下的 `~/.ssh` 目录。
+
+`~/.ssh/something` 为私钥
+
+`~/.ssh/something.pub` 为公钥
+
+如果没有 `~/.ssh` 目录，可以通过 `ssh-keygen` 生成一个。
+
+你只需要把 `.pub` 文件的内容发送给管理员。
+
+同时你可以在多个操作系统设定相同的 SSH 公钥，教程在
+```
+http://github.com/guides/providing-your-ssh-key。
+```
+## 架设服务器
+
+
+在服务器新建一个账户，并且创建 `~/.ssh` 目录
+```
+$ sudo adduser git
+$ su git
+$ cd
+$ mkdir .ssh
+```
+然后你只需要把开发者的 SSH 公钥添加到这个用户的 `authorized_keys` 文件中，就可以实现不需要密码的 SSH 通信
+
+只需要把他们逐个加入 `authorized_keys` 文件尾部即可
+```
+$ cat /tmp/id_rsa.john.pub >> ~/.ssh/authorized_keys
+$ cat /tmp/id_rsa.josie.pub >> ~/.ssh/authorized_keys
+$ cat /tmp/id_rsa.jessica.pub >> ~/.ssh/authorized_keys
+```
+
+开发者就可以通过如下操作进行开发
+
+```
+# 在 John 的电脑上
+$ cd myproject
+$ git init
+$ git add .
+$ git commit -m 'initial commit'
+$ git remote add origin git@gitserver:/opt/git/project.git
+$ git push origin master
+```
+
+如果你想现在开发者只能使用 git 账号登录的 shell ，你可以使用 Git 自带的工具。
+```
+$sudo vim /etc/passwd
+```
+上面那个文件应该是管理不同工具使用的命令行工具的
+
+在文末你可以找到
+```
+git:x:1000:1000::/home/git:/bin/sh
+```
+
+把 `bin/sh` 改成 `/user/bin/git-shell` 或者使用 `which git-shell` 
+```
+git:x:1000:1000::/home/git:/usr/bin/git-shell
+```
+这样 git 用户只能用 SSH 连接来推送和获取 Git 仓库，尝试普通连接会被拒绝。
+
+```
+$ ssh git@gitserver
+fatal: What do you think I am? A shell?
+Connection to gitserver closed.
+```
+
+## 公共访问
+
+那么该如何实现匿名化的读取呢，对于小型配置来说最简单的就是运行一个静态 web 服务，把其根目录设定为 Git 仓库所在的位置，然后使用 `post-update` 挂钩，我们用 Apache 服务器做例子。
+
+首先开启挂钩
+```
+$ cd project.git
+$ mv hooks/post-update.sample hooks/post-update
+$ chmod a+x hooks/post-update
+```
+
+`post-update` 大概作用就是，当通过 SSH 向服务器推送时，Git 将运行这个 `git-update-server-info` 命令来匿名更新 HTTP 访问获得数据时所需要的文件。
+
+再在 Apache 服务器上配置一下请求即可。
+
+然后需要把 `git` 根目录的 Unix 用户组设置为 `www-data`，这样 web 服务才能读取仓库内容，因为运行 CGI 脚本的 Apache 实例进程默认以用户身份
+```
+$ chgrp -R www-data /opt/git
+```
+
+重启之后就可以通过项目 URL 进行克隆了
+```
+$ git clone http://git.gitserver/project.git
+```
+
+## Gitosis
+
+把所有用户的公钥保存在 `authorized_keys` 文件的做法，并不适合大型项目，同时该做法还缺少必要的管理权限-每个人都对项目有完整的读写权限。
+
+我们可以使用 Gitosis 进行账户管理，确实它是通过一个特殊的 Git 仓库来管理的。
+
+
+# Git 工具
+
+### 简短的SHA
+
+Git 很聪明，你只需要提供的 SHA-1 不少于 4 个字符并且是唯一的，Git 就能帮你找到他。
+
+下面的命令是等价的
+```
+$ git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
+$ git show 1c002dd4b536e7479f
+$ git show 1c002d
+```
+
+### 分支引用
+
+如果你想看到分支指向哪个具体的 SHA ，就可以使用 `rev-parse` ，注意这个工具是为底层设计的。
+```
+$ git rev-parse topic
+ca82a6dff817ec66f44342007202690a93763949
+```
+
+### 引用日志的简称
+
+在你工作的时候， Git 在后台的工作之一就是保存一份引用日志，记录你几个月（可能是90天）的 HEAD 和分支引用的日志。
+
+你可以使用 `git relog` 来查看
+
+```
+$ git reflog
+734713b... HEAD@{0}: commit: fixed refs handling, added gc auto, updated
+d921970... HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
+1c002dd... HEAD@{2}: commit: added some blame and merge stuff
+1c36188... HEAD@{3}: rebase -i (squash): updating HEAD
+95df984... HEAD@{4}: commit: # This is a combination of two commits.
+1c36188... HEAD@{5}: rebase -i (squash): updating HEAD
+7e05da5... HEAD@{6}: rebase -i (pick): updating HEAD
+```
+
+你可以使用 `@{n}` 语法，来指定引用
+
+比如查看引用日志的前五次值
+```
+$ git show HEAD@{5}
+```
+
+你也可以使用这个语法来查看某个分支在一定时间前的位置，比如查看昨天的 `master` 分支在哪
+```
+$ git show master@{yesterday}
+```
+**引用日志信息只存于本地**！
+
+## 祖先引用
+
+你可以在引用后面加上一个 `^` 来查看此次提交的父提交。
+
+比如，你想查看上一次提交的父提交
+
+```
+$ git show HEAD^
+```
+
+你甚至可以在 `^` 后面加一个数字，比如 `d921970^2`，意思是 d921970 的第二次父提交。这种情况只有在合并的时候有用，因为只有在合并的时候会有多个父提交。
+
+```
+$ git show d921970^
+commit 1c002dd4b536e7479fe34593e72e6c6c1819e53b
+Author: Scott Chacon <schacon@gmail.com>
+Date:   Thu Dec 11 14:58:32 2008 -0800
+
+    added some blame and merge stuff
+
+$ git show d921970^2
+commit 35cfb2b795a55793d7cc56a6cc2060b4bb732548
+Author: Paul Hedderly <paul+git@mjr.org>
+Date:   Wed Dec 10 22:22:03 2008 +0000
+
+    Some rdoc changes
+```
+
+另一个指明父祖先的方法是 `~`，也是默认指向第一父提交。但当你指定数字时会和 `^` 有不一样的表现。 `HEAD~2` 指 “第一父提交的第一父提交”，也就是祖父提交。
+
+### 提交范围
+如果你想查哪些分支的工作我还没有合并到主分支的，需要查看一些问题。
+
+#### 双点
+主要让 Git 区分出可以从一个分支中获得而不能从另一个分支中获得的提交。例如你有如下提交历史。
+
+![avator](../../pic/progit-doubleclick.png)
+
+您可以使用 `master..experiment` 来让 Git 显示这些提交的日志。这句话的意思就是“所有可以从 exeriment 分支中获得而不能从 master 分支中获得的提交”
+
+```
+$ git log master..experiment
+D
+C
+```
+
+下面这条命令可以查看你将把模式提艾到远程仓库：
+```
+$ git log origin/master..HEAD
+```
+该命令的含义是显示你在当前分支而不再远程 `origin` 上的提交，你可以使用 `git log origin/masetr..` 得到相同效果。
+
+#### 多点
+
+你可以查看某些提交被包含在某些分支，但是不包含在你当前分支的情况。Git 允许你使用 `^` 字符或者 `--not` 指明你不希望提交被包含其中的分支。
+
+下面三个命令是等同的
+```
+$ git log refA..refB
+$ git log ^refA refB
+$ git log refB --not refA
+```
+
+同时它允许多个分支比较，比如 `refA` 或 `refB` 包含但是不被 `refC` 包含。
+```
+$ git log refA refB ^refC
+$ git log refA refB --not refC
+```
+
+#### 三点
+
+你可以使用该语法指定被两个引用的一个包含但又不被两者同时包含的分支
+```python
+master and experimnet == Fasle
+amster or experment == True
+```
+大概就是上面👆这个意思
+```
+$ git log master...experiment
+F
+E
+D
+C
+```
+
+你可以加上 `--left-right` 来看每个提交到底在哪一侧分支
+```
+$ git log --left-right master...experiment
+< F
+< E
+> D
+> C
+```
