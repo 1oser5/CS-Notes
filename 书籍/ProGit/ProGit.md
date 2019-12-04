@@ -1238,8 +1238,8 @@ $ git branch -D testing
 如果你需要有一个分支和他人一起开发，可以运行 `git push (远程仓库名)（分支名）`
 
 ```
-$ git push origin serverfix
-Counting objects: 20, done.
+$ 
+Counting objects: 20, done.git push origin serverfix
 Compressing objects: 100% (14/14), done.
 Writing objects: 100% (15/15), 1.74 KiB, done.
 Total 15 (delta 5), reused 0 (delta 0)
@@ -1697,3 +1697,250 @@ $ git log --left-right master...experiment
 > D
 > C
 ```
+
+### 交互式暂存
+
+可以在 `git add` 时加上 `-i` 或则 `-interactive` 选项，让 Git 进入一个交互式的 shell 模式,类似于下面界面
+```
+$ git add -i
+           staged     unstaged path
+  1:    unchanged        +0/-1 TODO
+  2:    unchanged        +1/-1 index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb
+
+*** Commands ***
+  1: status     2: update      3: revert     4: add untracked
+  5: patch      6: diff        7: quit       8: help
+What now>
+```
+
+你可以通过这个交互系统实现将某个文件的某几行暂存，某几行提交。
+
+## 储藏（Stashing）
+
+如果您手头上的工作做到一半，还不想提交，又出现了新的工作或者需要到其他分支，你可以使用 `git stash` 储藏你的工作状态
+
+### 储藏你的工作
+
+当你的工作目录不干净的时候，如果你运行 `git status` 可以看到
+```
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#      modified:   index.html
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#
+```
+
+你不行提交工作但是要切换分支，你可以使用这样来储藏这些改变
+```
+$ git stash
+Saved working directory and index state \
+  "WIP on master: 049d078 added the index file"
+HEAD is now at 049d078 added the index file
+(To restore them type "git stash apply")
+```
+
+通过 `git stash list` 来查看现有储存
+```
+$ git stash list
+stash@{0}: WIP on master: 049d078 added the index file
+stash@{1}: WIP on master: c264051... Revert "added file_size"
+stash@{2}: WIP on master: 21d80a5... added number to log
+```
+
+通过 `git stash apply` 应用储藏，如果你想应用更早的储藏，使用 `git stash apply stash@{2}`，不指名则会使用最近的储藏。
+
+要注意你应用储藏的工作目录要是干净的，并且属于同一分支。
+
+使用 `git stash drop` 来移除储藏
+```
+$ git stash list
+stash@{0}: WIP on master: 049d078 added the index file
+stash@{1}: WIP on master: c264051... Revert "added file_size"
+stash@{2}: WIP on master: 21d80a5... added number to log
+$ git stash drop stash@{0}
+Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)
+```
+
+你也可以运行 `git stash pop` 来重新应用出储藏，同时将其立刻从堆栈中移走。
+
+### 取消储藏
+
+想要取消之前应用储藏的修改，Git 没有提供 `stash unapply` 命令，可以通过取消该储藏的补丁达到同样效果。
+```
+$ git stash show -p stash@{0} | git apply -R
+```
+
+如果你没具体选择储藏。默认为最近的。
+
+### 从储藏中创建分支
+
+你储藏了一些工作之后，继续在分支上工作，在重新应用的时候会碰到一点问题，如果尝试应用改变，会碰到一个冲突。你可以使用 `git stash branch` 创建新分支来应用储藏，在进行合并就行，这是一个很棒的解决方案。
+
+
+## 重写历史
+
+### 改变最近一次提交
+
+你可以使用下面命令来修改最近一次的提交
+```
+git commit --amend
+```
+
+这会打开文本编辑器，里面是最近一次提交说明，你修改后保存退出，会让其成为你新的一次提交。
+
+如果你想添加或者删除文件，使用 `git add` 和 `git rm` 操作对应文件，随后使用 `git commit --amend`
+提交。**他会修改提交的 SHA-1 值，不要再推送之后使用它！**
+
+### 修改多个提交说明
+
+要修改提交历史中更早的提交，你必须采取更复杂的工具，挺可以使用 `rebase` 交互工具来回溯修改。
+
+比如想修改最近三次的提交说明
+```
+$ git rebase -i HEAD~3
+```
+
+注意，**不要对已经推送了的提交运行该命令**
+
+该命令会提供一个提交列表
+
+pick f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+```
+# Rebase 710f0f8..a5f4a0d onto 710f0f8
+#
+# Commands:
+#  p, pick = use commit
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+# However, if you remove everything, the rebase will be aborted.
+#
+```
+
+**注意，其中的提交顺序是反向的**
+
+如果你运行 `log`，结果是这样的：
+```
+$ git log --pretty=format:"%h %s" HEAD~3..HEAD
+a5f4a0d added cat-file
+310154e updated README formatting and added blame
+f7f3f6d changed my name a bit
+```
+
+您需要修改哪个脚本，只需要把前面的 `pick` 修改为 `edit` 即可。
+
+```
+edit f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+```
+
+当你保存编辑器，Git 会回退到列表最后一次提交，同时显示
+```
+$ git rebase -i HEAD~3
+Stopped at 7482e0d... updated the gemspec to hopefully work better
+You can amend the commit now, with
+
+       git commit --amend
+
+Once you’re satisfied with your changes, run
+
+       git rebase --continue
+```
+
+之后要干什么应该很明显了。
+
+### 重排提交
+
+你可以使用交互式的衍合来彻底重排或者删除，如果你想删除 "added cat-file" 这个提交并且修改其他俩次提交引用的顺序，那你将 `rebase` 脚本从
+
+```
+pick f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+```
+改为
+```
+pick 310154e updated README formatting and added blame
+pick f7f3f6d changed my name a bit
+```
+保存并退出，应用到 `f7f3f6d` 之后停止即。
+
+### 压制（squashing）提交
+
+如果你想把多个提交压缩成单一提交，可以指定 `squash`，他会同时应用那个变更和它之前的变更并将提交说明归并。如果你想把三个提交合并成一个提交，使用
+```
+pick f7f3f6d changed my name a bit
+squash 310154e updated README formatting and added blame
+squash a5f4a0d added cat-file
+```
+
+退出并保存后，弹出编辑器进行归并操作的修正，然后保存之后即可。
+
+### 拆分提交
+拆分提交就是撤销一次提交，然后多次部分地暂存或提交直到结束，如果你想拆分第二次提交
+```
+pick f7f3f6d changed my name a bit
+edit 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+```
+
+然后，这个脚本就将你带入命令行，你重置那次提交，提取被重置的变更，从中创建多次提交。当你保存并退出编辑器，Git 倒回到列表中第一次提交的父提交，应用第一次提交（f7f3f6d），应用第二次提交（310154e），然后将你带到控制台。那里你可以用git reset HEAD^对那次提交进行一次混合的重置，这将撤销那次提交并且将修改的文件撤回。此时你可以暂存并提交文件，直到你拥有多次提交，结束后，运行git rebase --continue。
+
+```
+$ git reset HEAD^
+$ git add README
+$ git commit -m 'updated README formatting'
+$ git add lib/simplegit.rb
+$ git commit -m 'added blame'
+$ git rebase --continue
+```
+
+这会修改你的 SHA 值，确保其未被推送到远程仓库。
+
+### 核弹级选项：filter-branch
+
+使用脚本的方式修改大量的提交，这个命令就是 `filter-branch`，会大面积修改历史。
+
+#### 从所有提交中删除一个文件
+
+如果有人不小心提交了一个巨大的二进制文件，你想把它从所有地方删除，或者有人不小心提交了某个包含密码的文件，使用它可以清除整个历史的工具，要从历史中删除一个名叫 `password.txt` 的文件，可以在 `filter-branch` 使用 `--tree-filter` 选项
+```
+$ git filter-branch --tree-filter 'rm -f passwords.txt' HEAD
+Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
+Ref 'refs/heads/master' was rewritten
+```
+
+要在所有分支都允许 `filter-branch`的话，传递一个 `--all` 命令。
+
+## 使用 Git 调试
+
+### 文件标注
+如果你想追踪代码的缺陷是什么时候被谁引进的，文件标注会使最佳的工具。他显示文件中对每一行进行修改的最近一次提交，可以使用 `git blame` 来标记文件，可以使用 `-L` 选项来限制输出范围。
+```
+$ git blame -L 12,22 simplegit.rb
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 12)  def show(tree = 'master')
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 13)   command("git show #{tree}")
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 14)  end
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 15)
+9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 16)  def log(tree = 'master')
+79eaf55d (Scott Chacon  2008-04-06 10:15:08 -0700 17)   command("git log #{tree}")
+9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 18)  end
+9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 19)
+42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 20)  def blame(path)
+42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 21)   command("git blame #{path}")
+42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 22)  end
+```
+
+第一个域是最后一次修改该行的那次提交的 SHA-1 值，接下去的两个域是从那次提交中抽取的值--作者和日期。前面带 `^` 表示是第一次出现，从那之后未被修改过。
