@@ -2521,7 +2521,7 @@ $ echo 'third commit'  | git commit-tree 3c4e9c -p cac0cab
 + 创建 tree 对象
 + 创建 commit 对象
 
-你最好可以看到这样的内容
+你最后可以看到这样的内容
 ```
 $ find .git/objects -type f
 .git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
@@ -2535,3 +2535,5 @@ $ find .git/objects -type f
 .git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
 .git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1
 ```
+
+![avator](../../pic/progit-history-by-plumb.png)
