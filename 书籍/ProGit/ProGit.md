@@ -2342,3 +2342,196 @@ index 88839c4..4afcb7c 100644
 ### 关键词扩展
 
 你可以使用一些关键字配合脚本来进行关键字替换，GIt 提供了两种过滤器，分别是在文件迁出前（smudge）和提交到暂存区前（clean）
+
+
+## Git挂钩
+### 安装一个挂钩
+挂钩都被存储在 Git目录下的 `hooks` 子目录中，即大部分项目中的 `.git/hooks`。任何可执行的脚本都是可以正常使用的，在 Git 1.6 版本之后，这样样本名都已 `.simple` 结尾。
+
+把一个正确命名且可执行的文件放入 Git 目录下的 `hook` 子目录中，可以激活该挂钩脚本，之后他也一直会被 Git 调用。
+### 客户端挂钩
+很有多客户端挂钩，他们分别是提交工作流挂钩、电子邮件工作流挂钩以及其他客户端挂钩。
+#### 提交工作流挂钩
+
++ pre-commit: 在键入提交信息之前，用来检查即将提交的快照，例如代码错误或者是否有文件遗漏。
++ prepare-commit-msg: 在默认信息被创建之后运行，可以对提交信息进行修改，或者以编程方式插入某些信息。该挂钩接受一些选项:提交信息的文件路径，提交类型。
++ commit-msg: 接受一个参数，此参数包含最近提交信息的临时文件的路径。使用该挂钩核对提交信息是否符合。
++ post-commit： 再整个流程完成后运行，不接收参数，但可以运行 `git log -1 HEAD` 获得最后提交信息，一般用作通知。
+
+#### E-mail工作流挂钩
+
+当你运行 `git am` 命令时，会调用它们，`git format-patch` 简而言之是用来补丁的。
+
++ applypatch-msg 挂钩: 接受一个参数，包含被建议提交信息的临时文件名，如果该脚本非正常退出，Git 会放弃该补丁。可以用这个脚本确认信息是否被格式化正确。
++ pre-applypatch 挂钩:不接收参数，在补丁运用之后运行，可以用来在提交前检查快照，进行测试等等。 
++ post-applypatch 挂钩: 用其进行通知，但无法阻止打补丁过程。
+
+#### 其他客户端挂钩
+
++ pre-rebase: 脚本非零退出时可以终止衍合，可以使用这个挂钩来禁止衍合已经提交的提交对象
++ post-checkout: 为你的项目环境设置合适的工作目录。
++ post-merge: 在 Git 无法追踪的工作树中恢复数据。
+
+### 服务器挂钩
+
+可以拒绝客户的推送，并将错误信息返回给客户端。
+
+#### pre-receive
+
+从标准输出（stdin）获得被推送引用的列表，如果其返回值不是 0，则所有推送内容都不被接受。
+
+#### post-receive: 
+过程完结后，可以用来更新其他系统服务或者通知用户，接受和 `pre-receive` 相同的标准输入数据。可以使用它来分析提交信息等。
+
+#### update
+和 `pre-receive` 相似，但是他会为每一个分支都运行一次，其不会从标准输入读取内容，而是接受三个参数：索引的名字（分支），推送前索引指向的内容的 SHA-1 值，以及用户试图推送的内容的 SHA-1 值。如果脚本已非零退出，只有对应的索引会被拒绝，其余都会得到更新。
+
+# Git内部原理
+
+## 底层命令和高层命令
+
+当你在一个新目录下执行 `git init` 时，Git 会创建一个 `.git` 目录，几乎所有的 Git 存储和操作内容都在该目录下。该目录的结构为下
+```
+$ ls
+HEAD
+branches/
+config
+description
+hooks/
+index
+info/
+objects/
+refs/
+```
+
++ branches: 新版本不在使用
++ descriptions: 仅供 GitWeb 程序使用
++ config: 包含项目特有的配置选项
++ info: 不希望在 `.gitignore` 文件中管理的忽略模式的全局可执行文件
++ hoos: 保存了客户端或服务器的钩子脚本
++ objects: 存储所有数据内容
++ ref: 存储指向数据（分支）的提交对象的指针
++ HEAD: 指向当前分支
++ index: 保存了暂存区信息
+
+## Git 对象
+
+Git 实际上是一套 **内容寻址文件系统**，其只是简单地存储键值对（key-value）。它允许插入任意类型的内容，并返回一个键值，并且你可以通过该键值取出内容。
+
+### blob对象
+我们新建一个库时，其 `objects` 目录包含 `pack` 和 `info` 子目录。
+
+我们可以使用 `hash-object` 命令存储数据，
+```
+$ echo 'test content' | git hash-object -w --stdin
+d670460b4b4aece5915caf5c68d12f560a9fe3e4
+```
+该命令输出一个 40 字符的校验和，这是一个 SHA-1 哈希值，你可以看到 Git 已经存储了数据
+```
+$ find .git/objects -type f
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4
+```
+
+你可以在 `objects` 目录下看到一个文件，这就是 Git 存储数据内容的方式-为每芬内容生成一个文件，取得该内容与头信息的 SHA-1 校验和，创建以该校验和前俩个字符为名称的子目录，并以校验和剩下的 38 个字符为文件命名。
+
+可以通过 `cat-file` 命令将文件内容取回，传入 `-p` 参数可以让命令输出数据内容
+```
+$ git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+test content
+```
+
+你可以指定一个文件添加，从而到达版本控制。
+
+通过 `cat-file -t` 可以查看文件类型
+```
+$ git cat-file -t 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
+blob
+```
+
+### tree对象
+
+tree 对象有点像文件夹概念，其中所有内容以 tree 或 blob 对象存储。一个单独的 tree 对象包含一条或者多条 tree 记录，每条记录包含一个指向 blob 或者 子 tree 对象的 SHA-1 指针，并附有该对象的权限、类型和文件名信息。
+```
+$ git cat-file -p master^{tree}
+100644 blob a906cb2a4a904a152e80877d4088654daad0c859      README
+100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
+040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib
+```
+`master^{tree}` 表示 `branch` 分支最新提交指向的 tree 对象，注意 lib 是一个指向另一个 tree 对象的指针。
+
+创建 tree 对象需要先把文件加入暂存区
+```
+$ git update-index --add --cacheinfo 100644 \
+  83baae61804e65cc73a7201a7252750c76066a30 test.txt
+```
+上文中的 `10064` 为文件模式，表示为一个普通文件。然后那你就可以调用 `write-tree` 将暂存区内容写入到一个 tree 对象中，上述操作可以加入多个文件。
+```
+$ git write-tree
+d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+$ git cat-file -p d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+100644 blob 83baae61804e65cc73a7201a7252750c76066a30      test.txt
+
+```
+可以这样进行验证
+```
+$ git cat-file -t d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+tree
+```
+![avator](../../pic/progit-tree-in-tree.png)
+
+### commit对象
+
+保存了一些提交作者的信息，可以使用 `commit-rree`命令，并指定一个 tree 的 SHA-1 来创建一个 commit 对象
+```
+$ echo 'first commit' | git commit-tree d8329f
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d
+```
+
+通过 `cat-file` 查看
+```
+$ git cat-file -p fdf4fc3
+tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+author Scott Chacon <schacon@gmail.com> 1243040974 -0700
+committer Scott Chacon <schacon@gmail.com> 1243040974 -0700
+
+first commit
+```
+
+commit 对象格式很简单：
+
++ tree 对象
++ 作者及信息
++ 时间戳
++ 提交注释信息
+
+在写入另外的 commit 对象，每个都指定其前一个 commit 对象
+```
+$ echo 'second commit' | git commit-tree 0155eb -p fdf4fc3
+cac0cab538b970a37ea1e769cbbde608743bc96d
+$ echo 'third commit'  | git commit-tree 3c4e9c -p cac0cab
+1a410efbd13591db07496601ebc7a059dd55cfe9
+```
+
+这样就模拟了真是的 Git 历史。你刚刚使用了低级操作而不是普通命令实现了创建 Git 历史。
+
+这就是 `git add` 和 `git commit` 运行时 Git 的操作
+
++ 保存修改文件的 blob
++ 更新索引
++ 创建 tree 对象
++ 创建 commit 对象
+
+你最好可以看到这样的内容
+```
+$ find .git/objects -type f
+.git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
+.git/objects/1a/410efbd13591db07496601ebc7a059dd55cfe9 # commit 3
+.git/objects/1f/7a7a472abf3dd9643fd615f6da379c4acb3e3a # test.txt v2
+.git/objects/3c/4e9cd789d88d8d89c1073707c3585e41b0e614 # tree 3
+.git/objects/83/baae61804e65cc73a7201a7252750c76066a30 # test.txt v1
+.git/objects/ca/c0cab538b970a37ea1e769cbbde608743bc96d # commit 2
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4 # 'test content'
+.git/objects/d8/329fc1cc938780ffdd9f94e0d364e0ea74f579 # tree 1
+.git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
+.git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1
+```
