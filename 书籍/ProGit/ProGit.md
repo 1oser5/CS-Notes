@@ -2537,3 +2537,332 @@ $ find .git/objects -type f
 ```
 
 ![avator](../../pic/progit-history-by-plumb.png)
+
+### 对象存储
+
+**以下代码由 ruby 实现**
+
+1.Git 以对象类型为起始内容构造一个头文件，然后添加一个空格，接着是数据内容长度，最后是一个空字节。
+
+```
+>> header = "blob #{content.length}\0"
+=> "blob 16\000"
+```
+
+2.Git 将文件头与原始数据内容拼接起来，然后计算其 SHA-1 校验和。
+
+3.最后yoga zlib 对数据内容进行压缩
+
+4.最后写入指定保存对象的路径(SHA-1 值的头两个字符作为子目录名称，剩余 38 个字符作为文件名保存至该子目录中)。
+
+## Git References
+
+你可以执行 `git log 1a410e` 命令来查看完整的历史，你需要一个文件来用一个简单的名字来记录 SHA-1 值，只有你就可以用这些指针而不是 SHA-1 值来检索。
+
+在 Git 中，我们称之为“引用”（reference 或 refs），你可以在 `.git/refs` 目录下面找到这些包含 SHA-1 值的文件。
+
+你可以这样更新一个引用
+```
+$ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9
+```
+
+实际上 Git 中的一个分支就是一个指向某个工作版本的一条 HEAD 记录的指针或引用。你可以用这个目录创建一个指向第二次提交的分支
+```
+$ git update-ref refs/heads/test cac0ca
+```
+
+这样你的分支只会包含那次提交以及之前的工作：
+```
+$ git log --pretty=oneline test
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+```
+
+![avator](../../pic/progit-use-refs.png)
+
+当你在执行 `git branch （分支名称）` 这样的命令,Git 基本上就是执行了 `update-ref` 命令，把你最后一次提交的 SHA-1 值，添加到你要创建的分支的引用。
+
+#### HEAD 标记
+
+当你使用 `git branch` 时， Git 如何知道最后一次提交的 SHA-1 值呢，答案就是 HEAD 文件，HEAD 文件是一个指向你当前所在分支的引用标识符，但他看上去不像一个普通的引用，而是一个指向另一个引用的指针。
+
+你可以通过 `git symbolic-ref` 命令来设置 HEAD 值
+
+```
+$ git symbolic-ref HEAD refs/heads/test
+$ cat .git/HEAD
+ref: refs/heads/test
+```
+
+### Tags
+
+Tags 对象很像 commit 对象，包含一组标签，一组数据，一个消息和一个指针，最主要的区别就是 Tag 对象指向一个 commit 而不是一个 tree，他就像一个分支引用，但不会变化，永远指向一个 commit，仅仅是提供一个更友好的名字。
+
+你可以这样建立 一个 lightweight 类型的 tags。
+```
+git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d
+```
+要注意 tags 并不是一定要指向 commit 对象，他可以指向任何 Git 对象，比如 linux kernal 中第一个 tag 指向 initial tree。
+
+### Remotes
+
+如果你添加了一个 remote 分支然后推送代码，那么 Git 会把你最后一次推送到这个 remote 的每个分支的值建立在 `refs/remotes` 目录下。你不能对他们进行 `checkout`，Git 将他们最为这些分支在服务器的最后状态的书签。
+
+
+## Packfiles
+
+Git 往磁盘保存对象时，默认保存松散对象，Git 会时不时将这些松散对象打包成 packfiles 来减少占用空间，你可以使用 `git gc` 手动运行。
+
+packfiles 一般可以让占用空间减半，打包后你的 objects 目录下原有文件没有了，但在 objects 文件里的 pack 会多出来两个文件
+```
+.git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
+.git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack
+```
+一个是 索引文件，包含了 packfile 的偏移信息，这样可以快速定位一个对象，另一个就是新建的 packfile 文件。
+
+那么是如何实现的呢？ Git 会查找大小和内容相似的文件，并且只保存他们的差异。
+
+## Refspec
+
+如果你使用下面命令添加了远程仓库
+```
+$ git remote add origin @gite...
+```
+
+相当于在 `.git/config` 加上了一节
+
+```
+url = 
+fetch + = refs/heads/*:refs/remotes/origin/*:
+```
+
+remote 的格式为，一个可选的 + 号，`<src:dis>`，src 表示远程仓库的引用格式，dis 表示目本地的引用格式。
+
+缺省情况时有 `git remote add` 会默认生成 refspec
+`git fetch` 操作默认选用其选项。
+
+如果你想指向拉取远程仓库的 master 分支，可以这样
+```
+fetch = +refs/heads/master:refs/remotes/origin/master
+```
+如果你只想拉取一次
+```
+git fetch origin master:refs/romotes/origin/master
+```
+
+你不能再 ref 中使用部分通配符
+
+### 推送 Refpec
+
+如果 QA 小组成员想把它们的本地 master 分支推送到远程 qa/matser 上，可以
+```
+git push origin master:refs/heads/qa/master
+```
+
+如果想要每次都这样，在 `config` 中加上
+```
+fetch = +refs/heads/*:refs/remotes/origin/*
+push = refs/heads/master:refs/remotes/origin/qa/master
+```
+这样在 `git push origin` 时就会缺省把本地 `master` 推送到 `qa/master` 上
+
+## 传输协议
+Git 主要通过 HTTP 或者 file:// 和 ssh:// 和 git:// 进行智能传输
+### 哑协议
+
+Git 基于 HTTP 上的请求经常被称为哑协议，因为其服务器不需要有针对 Git 的代码，其仅仅是一个 GET 请求。
+
+1.获得 info/refs 文件，这个文件是由 `update-server-info` 生成的
+
+你会得到一个远端引用和 SHA 值的表
+
+2.然后你需要找到 HEAD 引用
+
+3.通过 HEAD 引用找到的 commit 对象中解析出父对象，继续找
+
+4.抓取 tree 对象
+
+5.tree 对象可能找不到，因为他可能被打包了，你首先要在 `objects/info.http-alternates` 里找是否有替代仓库，这是一种在软件分叉之间贡献对象节约磁盘的好方法。
+
+6.如果没有替代仓库，你需要到 `object/info/pack` 文件，找到打包列表
+
+7.根据索引在 pakcfile找到对应的对象，然后继续向上游漫游。
+
+```
+$ git clone http://github.com/schacon/simplegit-progit.git
+Initialized empty Git repository in /private/tmp/simplegit-progit/.git/
+got ca82a6dff817ec66f44342007202690a93763949
+walk ca82a6dff817ec66f44342007202690a93763949
+got 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+Getting alternates list for http://github.com/schacon/simplegit-progit.git
+Getting pack list for http://github.com/schacon/simplegit-progit.git
+Getting index for pack 816a9b2334da9953e530f27bcac22082a9f5b835
+Getting pack 816a9b2334da9953e530f27bcac22082a9f5b835
+ which contains cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+walk 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+walk a11bef06a3f659402fe7563abf99ad00de2209e6
+```
+
+### 智能协议
+
+使用智能协议上传或者下载数据都是很常用的方法，git 拥有智能型的进程对其进行支持，两个用来上传，俩个用来下载。
+
+#### 上传数据
+
+Git 有两个进程，一个客户端进程 `send-pack`，一个服务端进程 `receive-pack`。当你使用 send-pack 进程时，其调用基于 SSH 连接到服务器。
+
+你在项目上运行了 `git push origin master` 并 `origin` 被定义为一个 SSH 协议的 URL。
+
+```
+$ ssh -x git@github.com "git-receive-pack 'schacon/simplegit-progit.git'"
+005bca82a6dff817ec66f4437202690a93763949 refs/heads/master report-status delete-refs
+003e085bb3bcb608e1e84b2432f8ecbe6306e7e7 refs/heads/topic
+0000
+```
+每一行是一个引用，开头的 4 个 16 进制字节表示数据长度，后面则是数据内容。
+
+最后一行 0000 表示服务器完成了引用列表过程。
+
+你的 `send-pack` 会判断哪些 commit 对象是服务器没有的，针对每个引用，推送都会告诉对端的`receive-pack` 该信息。如果你在更新 master 分支并且要新增 experiment 分支，你的 send-pack 将会是这样。
+```
+0085ca82a6dff817ec66f44342007202690a93763949  15027957951b64cf874c3557a0f3547bd83b3ff6 refs/heads/master report-status
+00670000000000000000000000000000000000000000 cdfdb42577e2506715f8cfeacdbabc092bf63e8d refs/heads/experiment
+0000
+```
+
+左边全为 0 表示 SHA-1 值表示之前没有过这个对象，如果在你删除一个引用的时候，你就会看到右边全是 0 。
+
+
+#### 下载数据
+
+当你在下载数据的时候，`fetch-pack` 和 `upload-pack` 进程就启动了，`fetch-pack` 在客户端启动，`upload-pack` 则在服务器
+
+在远端仓库有不同的方式启动 `upload-pack` 进程，你可以用和 `seceive-pack` 相同的透过 SSH 方式，也可以使用 Git 后台来启动。
+
+当启动 `fetch-pack` 进程时，其会这样向后台发送数据
+```
+003fgit-upload-pack schacon/simplegit-progit.git\0host=myserver.com\0
+```
+前四个字节是命令的长度，后面是命令+主机名，最后加上一个空格。
+
+Git 后台进程会检查这个命令是否可以运行，检查主机名是否存在，以及是否有公开权限，如果都通过了，他会启动 `upload-pack`并将请求转交给他。
+
+不管何种形式，`upload-pack` 都会以这种形式返回
+```
+0088ca82a6dff817ec66f44342007202690a93763949 HEAD\0multi_ack thin-pack \
+  side-band side-band-64k ofs-delta shallow no-progress include-tag
+003fca82a6dff817ec66f44342007202690a93763949 refs/heads/master
+003e085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 refs/heads/topic
+0000
+```
+整个过程像这样
+```
+0054want ca82a6dff817ec66f44342007202690a93763949 ofs-delta
+0032have 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+0000
+0009done
+```
+
+## 维护及数据恢复
+
+### 维护
+
+Git 会定期执行维护任务，一般是什么都不做，如果存在太多的松散对象或者 packfiles，Git 会调用 `git gc` 命令，gc 值垃圾收集（garbage collect）。Git 会将所有松散对象存入 packfiles，将几个小的 packfiles 合并一个大的，将不被任何 commit 引用并且已经存在很久（几月）的对象删除
+
+你可以手动进行维护
+```
+$ git gc auto
+```
+如果有 7000 个左右的松散对象，或者 50 个以上的 packfile，Git 才会调用该命令。你可以通过修改 `gc.auto` 和 `gc.autopacklimit` 来调整阈值。
+
+gc 还会将所有引用并入 `.git/packed-refs` 文件。
+
+当更新引用时，Git 不会修改这个文件，而是在 `ref/heads` 下写下一个新文件。再查找 SHA 时，现在 `refs` 上，如果没有找到，就去 `packed-refs` 中查找。
+
+
+`.git/packed-refs` 文件是这样的
+
+```
+$ cat .git/packed-refs
+# pack-refs with: peeled
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/heads/experiment
+ab1afef80fac8e34258ff41fc1b867c702daa24b refs/heads/master
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
+9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1
+^1a410efbd13591db07496601ebc7a059dd55cfe9
+```
+
+注意最后一行的 `^`，表示这行的上一行是个 annotated 标签，这行正是那个标签所指的 commit。
+
+
+### 数据恢复
+
+如果你删除了 commit 记录，可以通过 `git relog` 进行查看，找到对应的 SHA-1 值，
+```
+$ git reflog
+1a410ef HEAD@{0}: 1a410efbd13591db07496601ebc7a059dd55cfe9: updating HEAD
+ab1afef HEAD@{1}: ab1afef80fac8e34258ff41fc1b867c702daa24b: updating HEAD
+```
+然后新建一个该 SHA-1 值的分支，你就会发现这个分支上拥有当时 commit 的记录。
+```
+$ git branch recover-branch ab1afef
+$ git log --pretty=oneline recover-branch
+ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
+484a59275031909e19aadb7c92262719cfcdf19a added repo.rb
+1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+```
+
+你使用 `update-ref` 命令时，Relog 也会更新。
+
+reflog 存储在 .git/logs 目录下。
+
+如果连该对象也移除了，可以使用 `git fsck`，该工具会检查仓库数据完整性，如果指定 `--full` 选项，该命令显示所有未被其他对象引用的对象。
+
+### 移除对象
+
+当你不小心上传一个很大的文件到 Git 时，删除它也无济于事，因为历史记录中会永远存在这个文件迁入的历史，因此你需要一些有些破坏性的方法。
+
+先运行 `git gc` 将所有对象存入 packfile 文件
+首先通过 `git verify-pack`删选出大文件
+```
+$ git verify-pack -v .git/objects/pack/pack-3f8c0...bb.idx | sort -k 3 -n | tail -3
+```
+
+然后通过其 SHA 值，列出这个文件
+```
+$ git rev-list --objects --all | grep 7a9eb2fb
+7a9eb2fba2b1811321254ac360970fc169ba2330 git.tbz2s
+```
+
+找出所有有该记录的文件
+```
+$ git log --pretty=oneline --branches -- git.tbz2
+da3f30d019005479c99eb4c3406225613985a1db oops - removed large tarball
+6df764092f3e7c8f5f94cbe08ee5cf42e92a0289 added git tarball
+```
+
+使用 `filter-branch` 命令，找出所有从有该命令的 tree 移除
+```
+$ git filter-branch --index-filter \
+   'git rm --cached --ignore-unmatch git.tbz2' -- 6df7640^..
+Rewrite 6df764092f3e7c8f5f94cbe08ee5cf42e92a0289 (1/2)rm 'git.tbz2'
+Rewrite da3f30d019005479c99eb4c3406225613985a1db (2/2)
+Ref 'refs/heads/master' was rewritten
+```
+
+再删除之前还有大文件的引用，重新对 仓库 `repack`
+
+```
+$ rm -Rf .git/refs/original
+$ rm -Rf .git/logs/
+$ git gc
+Counting objects: 19, done.
+Delta compression using 2 threads.
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (19/19), done.
+Total 19 (delta 3), reused 16 (delta 1)
+```
+
+最终使用 `git prune --expire` 命令，将该对象从松散对象删除。
