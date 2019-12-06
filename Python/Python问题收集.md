@@ -330,3 +330,55 @@ try:
 except:
     print(traceback.format_exc())
 ```
+
+## 10.自定义对象的布尔值
+Python 中布尔值为 False 的值为：
+
++ ""
++ {}
++ []
++ None
++ False
++ 0
++ set()
+
+用户自定义类一般布尔值为 True，但是你也可以通过设置魔术方法进行修改（`__len__` 和 `__bool__`）
+
+### \_\_bool__
+
+```python
+class Student(object):
+    def __init__(self,s):
+        pass
+    def __bool__(self):
+        return Fasle
+
+s = Student()
+bool(s) #return False
+```
+当你设置了 `__bool__` 方法，在进行布尔判断的时候，会用该方法的返回值作为实例的布尔值。
+
+### \_\_len__
+
+如果你没有定义 `__bool__` 方法，Python 还会尝试调用 `__len__`（确实是序列对象的 `len` 方法） 方法，通过其返回值是否为 0 判断布尔值。
+
+```python
+# without __len__
+class User(object):
+    def __init__(self, users):
+        self.users = users
+
+u = User()
+if u.users > 0:
+    return True
+
+# use __len__
+class User(object):
+    def __init__(self, users):
+        self.users = users
+    def __len__(self):
+        return len(self.users)
+
+u = User()
+if u:
+    return True
