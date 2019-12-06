@@ -382,3 +382,4 @@ class User(object):
 u = User()
 if u:
     return True
+```
