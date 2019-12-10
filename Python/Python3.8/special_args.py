@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 '''
 @File    :   special_args.py
@@ -21,7 +20,16 @@ def standard_args(a):
 
 # positional only
 def positional_only(a, /):
-    
-
-if __name__ == '__main__':
     pass
+# kwd_only    
+def kwd_only_args(*, a):
+    pass
+def combined_example(pos_only, /, standard, *, kwd_only):
+    pass
+if __name__ == '__main__':
+    standard_args(a=2)
+    standard_args(2)
+    positional_only(2)
+    kwd_only_args(a=2)
+    combined_example(1, 2, kwd_only=2)
+    combined_example(standard = 1, kwd_only=2)
