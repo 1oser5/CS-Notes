@@ -97,3 +97,15 @@ source ~/.bashrc
   which       显示安装路径
 ```
 
+## 问题
+
+### 下载保存
+在下载 Python 3.8.0 时遇到 `curl: (56) LibreSSL SSL_read: SSL_ERROR_SYSCALL, errno 54` 问题
+
+### 解决
+手动下载 Python-3.6.3.tar.xz，在放到 `~/.pyenv/cache` 文件夹下，在运行 `pyenv install` 即可。
+```
+$ mkdir ~/.pyenv/cache
+$ cp /xxx/xxx/Python-3.6.3.tar.xz ~/.pyenv/cache
+$ pyenv install 3.6.3
+```
