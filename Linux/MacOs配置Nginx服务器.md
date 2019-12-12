@@ -70,3 +70,12 @@ nginx -s reload
 ```
 autoindex on;
 ```
+
+## 问题
+
+### 中文编码问题
+
+配置中加入
+ ```
+charset utf-8;
+ ```
