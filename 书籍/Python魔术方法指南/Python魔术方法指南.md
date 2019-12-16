@@ -296,6 +296,10 @@ jar.close()
 pkl_file = open('data.pkl', 'rb')
 data = pickle.load(pkl_file)
 pkl_file.closer()
-``
+```
 
 pickle 并不是很完美，其比较容易损坏，但是他比文件稍微安全一点。
+
+Magic Methods
+
+![avator](../../pic/python-magic-method.jpg)
