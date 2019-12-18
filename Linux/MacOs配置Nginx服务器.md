@@ -125,3 +125,5 @@ server {
 ```
 nginx -s reload
 ```
+
+> 注意默认端口号为 443
