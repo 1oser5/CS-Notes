@@ -79,3 +79,49 @@ autoindex on;
  ```
 charset utf-8;
  ```
+
+### https
+
+配置https 证书，使得内网可以通过https连接
+
+1.创建 root key
+```
+$ openssl genrsa -des3 -out rootCA.key 2048
+```
+
+2.生成证书
+```
+openssl req -new -key server.key -out server.csr
+```
+
+下面选项至少写一个
+```
+Country Name (2 letter code) []:ch
+State or Province Name (full name) []:
+Locality Name (eg, city) []:
+Organization Name (eg, company) []:
+Organizational Unit Name (eg, section) []:
+Common Name (eg, fully qualified host name) []:
+Email Address []:
+```
+
+3.将 `nginx.conf` https 部分进行如下配置
+```
+server {
+        listen       443 ssl;
+        server_name  static.millet.com;
+         #server.crt和server.key都在nginx下面
+        ssl_certificate      server.crt;
+        ssl_certificate_key  server.key;
+
+        location / {
+            root   （当前静态文件的路径）;
+            index  index.html index.htm;
+        }
+    }
+```
+
+4.重新启动 nginx
+```
+nginx -s reload
+```
