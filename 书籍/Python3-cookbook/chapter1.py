@@ -10,12 +10,6 @@
 @Desc    :   None
 '''
 
-# here put the import lib
-
-if __name__ == '__main__':
-    pass
-# here put the import lib
-
 # 1.解压序列赋值给多个变量
 p = (4, 5)
 x, y = p
