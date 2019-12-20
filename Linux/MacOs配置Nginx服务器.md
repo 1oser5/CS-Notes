@@ -117,6 +117,7 @@ server {
         location / {
             root   （当前静态文件的路径）;
             index  index.html index.htm;
+            autoindex on;
         }
     }
 ```
