@@ -61,3 +61,13 @@ location / {
             autoindex on;
         }
 ```
+
+## Centos 常用命令
++ centOS 7 启动一个服务：systemctl start 服务名.service
++ 关闭一个服务：systemctl stop 服务名.service
++ 重启一个服务：systemctl restart 服务名.service
+
++ 显示一个服务的状态：systemctl status 服务名.service
++ 在开机时启用一个服务：systemctl enable 服务名.service
++ 在开机时禁用一个服务：systemctl disable 服务名.service
+
