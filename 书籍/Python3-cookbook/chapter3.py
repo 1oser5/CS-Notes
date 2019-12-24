@@ -185,4 +185,16 @@ c = a + b
 c.days # 2
 c.seconds # 37800
 c.seconds / 3600 # 10.5
-# 
+
+# 15.字符串转换为日期
+""" 使用 datetime 的 strptime 函数转化
+ATTENTION strptime 的性能比你想象的差很多，因为他是纯 Python 实现的，并且要处理所有系统本地时间
+ """
+from datetime import datetime
+text = '2012-09-20'
+# str -> time
+y = datetime.strptime(text, '%Y-%m-%d')
+z = datetime.now()
+diff = z - y # datetime.timedelta(3, 77824, 177393)
+# time -> str
+nice_z = datetime.strftime(z, '%A %B %d, %Y') # 'Sunday September 23, 2012'
