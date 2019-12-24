@@ -383,3 +383,21 @@ u = User()
 if u:
     return True
 ```
+
+# 11.yield和yield from
+
+yield form 本质上是将生成器或者可迭代对象进行解析后返回，可以这样来理解
+
+`yield from iterable` 本质上等于 `for item in iterable: yield item`。
+
+下面是一个简单的离职
+```python
+def y():
+    yield range(5)
+def yf():
+    yield from range(5)
+for x in y():
+    print(x) # range(0, 5)
+for y in yf():
+    print(y) # 0, 1, 2, 3, 4, 5
+```
