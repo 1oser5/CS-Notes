@@ -83,3 +83,62 @@ child1.add_child(Node(4))
 child2.add_child(Node(5))
 for c in root.depth_first():
     print(c)
+
+# 4.5反向迭代
+""" 定义了 __reversed__ 函数的对象可以使用 reversed 进行反向迭代
+如果没有定义 __reversed__ 方法，则需要先转化为列表
+ATTENTION 如果列表元素很大，转化列表会很占用空间
+__reversed__ 返回生成器是很高效的做法
+ """
+# 反向迭代列表
+a = [1, 2, 3, 4]
+for x in reversed(a):
+    print(x)
+# 转化为列表再反转
+lines = '123'
+for line in reversed(list(lines)):
+    print(line)
+# 定义生成器反转
+class Countdown(object):
+    def __init__(self, start):
+        self.start = start
+    def __iter__(self):
+        """ 正向迭代 """
+        n = self.start
+        while n > 0:
+            yield n
+            n -= 1
+    def __reversed__(self):
+        """ 反向迭代 """
+        n = 0
+        while n <= self.start:
+            yield n
+            n += 1
+for r in reversed(Countdown(30)):
+    print(r)
+for r in (Countdown(30)):
+    print(r)
+
+# 4.6带有外部状态的生成器
+""" 想暴露一些生成器的属性，将它设计为类，再实现 __iter__ 方法即可 """
+from collections import deque
+class linehistory(object):
+    def __init__(self, lines, histlen=3):
+        self.lines = lines
+        self.history = deque(maxlen=histlen)
+    def __iter__(self):
+        for lineno, line in enumerate(self.lines, 1):
+            self.history.append((lineno, line))
+            yield line
+    def clear(self):
+        self.history.clear()
+
+# 4.7生成器切片
+""" 使用 itertools 解决生成器切片问题 """
+import itertools
+def count(n):
+    while True:
+        yield n
+        n += 1
+for x in itertools.islice(c, 10, 20):
+    print(x)
