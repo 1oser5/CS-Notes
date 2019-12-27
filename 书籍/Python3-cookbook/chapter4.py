@@ -133,7 +133,7 @@ class linehistory(object):
     def clear(self):
         self.history.clear()
 
-# 4.7生成器切片
+# 7.生成器切片
 """ 使用 itertools 解决生成器切片问题 """
 import itertools
 def count(n):
@@ -142,3 +142,200 @@ def count(n):
         n += 1
 for x in itertools.islice(c, 10, 20):
     print(x)
+
+# 8.跳过可迭代对象的开始部分
+""" 使用 itertools 的 dropwhile 和 islice
+dropwhile 接受一个函数对象和可迭代对象，他会返回一个迭代器对象，丢弃原有序列中直到函数返回 False 之前的元素
+ """
+from itertools import dropwhile
+with open('/etc/passwd') as f:
+    for line in dropwhile(lambda x: line.startswith('#'), f):
+        print(line, end='')
+# 知道具体跳过哪几个对象，使用 islice
+from itertools import islice
+items = ['a', 'b', 'c', 1, 4, 10, 15]
+for x in islice(items, 3, None):
+    print(x)
+
+# 9.迭代的排列组合
+""" itertools.permutations() 生成全排列
+itertools.combinations() 也生成全排列但不在乎顺序
+itertools.itertools.combinations_with_replacement() 则不剔除元素计算
+ """
+from itertools import permutations
+items = ['a', 'b', 'c']
+# 全排列
+for p in permutations(items):
+    print(p)
+# 输出
+# ('a', 'b', 'c')
+# ('a', 'c', 'b')
+# ('b', 'a', 'c')
+# ('b', 'c', 'a')
+# ('c', 'a', 'b')
+# ('c', 'b', 'a')
+
+# 指定长度
+for p in permutations(items, 2):
+    print(p)
+# 对 combination 来说，不在乎顺序
+from itertools import combinations
+for c in combinations(items,3):
+    print(c) # ('a', 'b', 'c')
+for c in combinations(items, 2):
+    print(c)
+# 输出
+# ('a', 'b')
+# ('a', 'c')
+# ('b', 'c')
+
+# itertools.combinations_with_replacement() 不会剔除元素
+from itertools import combinations_with_replacement
+for c in combinations_with_replacement(items, 3):
+    print(c)
+ # 输出
+ # ('a', 'a', 'a')
+# ('a', 'a', 'b')
+# ('a', 'a', 'c')
+# ('a', 'b', 'b')
+# ('a', 'b', 'c')
+# ('a', 'c', 'c')
+# ('b', 'b', 'b')
+# ('b', 'b', 'c')
+# ('b', 'c', 'c')
+# ('c', 'c', 'c')   
+
+# 10.序列索引值迭代
+""" enumerate() 函数很好的解决了这个问题 """
+my_list = ['a', 'b', 'c']
+for index, value in enumerate(my_list):
+    print(index, value)
+# 输出
+# 0 a
+# 1 b
+# 2 c
+
+# 可以使索引从指定位置开始
+for index, value in enumerate(my_list, 1):
+    print(index, value)
+# 输出
+# 1 a
+# 2 b
+# 3 c
+
+# 11.同时迭代多个序列
+""" 使用 zip 来进行同时迭代
+zip 会返回一个生成器，生成器中的元素为 个数为输入序列数量的元组
+生成器长度默认为 最短序列长度
+可以使用 itertools.zip_longest() 来继续迭代到最长序列
+"""
+xpts = [1, 5, 4, 2, 10, 7]
+ypts = [101, 78, 37, 15, 62, 99]
+for x, y in zip(xpts, ypts):
+    print (x, y)
+# 输出
+# 1 101
+# 5 78
+# 4 37
+# 2 15
+# 10 62
+# 7 99
+
+# 返回生成器长度和最短序列一致
+a = [1, 2, 3]
+b = ['w', 'x', 'y', 'z']
+for i in zip(a, b):
+    print(i)
+# 输出
+# (1, 'w')
+# (2, 'x')
+# (3, 'y')
+
+# 使用 itertools.zip_longest() 来输出最长生成器
+from itertools import zip_longest
+for i in zip_longest(a, b):
+    print(i)
+# 输出
+# (1, 'w')
+# (2, 'x')
+# (3, 'y')
+# (None, 'z')
+
+# 可以设置默认填充值
+for i in zip_longest(a, b, fillvalue=0):
+    print(i)
+# 输出
+# (1, 'w')
+# (2, 'x')
+# (3, 'y')
+# (0, 'z')
+
+# 12.不同集合上元素的迭代
+""" 想要多个集合执行相同操作，使用 itertools.chain()
+其可以接受1个或者多个集合，并返回一个迭代器
+这会比将几个集合先合并在执行循环效率要高，因为合并集合需要新建一个集合，而 chain 没有这一步
+在集合元素较多时很有用
+ """
+from itertools import chain
+a = [1, 2, 3, 4]
+b = ['x', 'y', 'z']
+for x in chain(a, b):
+    print(x)
+# 输出
+# 1
+# 2
+# 3
+# 4
+# x
+# y
+# z
+
+# 其效率比先将序列合并在迭代要高得多
+# Inefficent
+for x in a + b:
+    pass
+# Better
+for x in chain(a, b):
+    pass
+
+# 14.展开嵌套的序列
+""" 使用 yield from 将多层嵌套展开为单层列表 """
+from collections.abc import Iterable
+
+def flatten(items, ignore_types = (str, bytes)):
+    for i in items:
+        if isinstance(i, Iterable) and not isinstance(i, ignore_types):
+            yield from i
+        else:
+            yield i
+items = [1, 2, [3, 4, [5, 6], 7], 8]
+for x in flatten(items):
+    print(x) # Produces 1 2 3 4 5 6 7 8
+
+# 15.顺序迭代合并后的排序迭代对象
+""" 使用 heapq.merge() 将有序的多个列表合并为一个
+ATTENTION 注意 heapq 要求所有输入都是有序的，因为他不会预先读取所有数据到堆栈中，
+也不会对输入做任何排序检测，他只检查所有序列开始部分的最小那个
+"""
+import heapq
+a = [1, 4, 7, 10]
+b = [2, 5, 6, 11]
+for c in heapq.merge(a, b):
+    print(c)
+
+# 15.使用 iter() 代替无限循环
+""" iter 函数鲜为人知的一点是它接受一个 callable 对象和一个结束标志，他会不断迭代
+知道 callabe 返回和结束标志一样的内容
+"""
+CHUNKSIZE = 8192
+# 传统 I/O 做法
+def reader(s):
+    while True:
+        data = s.recv(CHUNKSIZE)
+        if data == b'':
+            break
+        # process_data(data)
+# 使用 iter()
+def reader2(s):
+    for chunk in iter(lambda s: s.recv(CHUNKSIZE), b''):
+        pass
