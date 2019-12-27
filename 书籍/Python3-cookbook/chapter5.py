@@ -100,3 +100,49 @@ s.getvalue()  # 'Hello World\nThis is a test\n'
 s = io.StringIO('Hello\nWorld\n')
 s.read(4) # Hell
 s.read() # 'o\nWorld\n'
+
+# 7.读写压缩文件
+""" 使用 gzip 和 bz2 读写压缩文件 """
+# 读操作
+import gzip
+with gzip.open('somefile.gz', 'rt') as f:
+    text = f.read()
+import bz2
+with bz2.open('somefile.bz2', 'rt') as f:
+    text = f.read()
+# 写操作
+with gzip.open('somefile.gz', 'wt') as f:
+    f.write(text)
+with bz2.open('somefile.bz2', 'wt') as f:
+    f.write(text)
+
+# 8.在固定长度的数据块上迭代
+""" 使用 iter 配合 functools.partial() """
+from functools import partial
+RECORD_SIZE = 32
+with open('somefile.data', 'rb') as f:
+    records = iter(partial(f.read, RECORD_SIZE), b'')
+    for r in records:
+        pass
+
+# 9.读取二进制数据到可变缓存区
+""" readinto 能用来为预先分配内存的数组填充数据，和普通方法不同，readinto 填充已存在的缓存区而不是为新对象
+重新分配内存
+ATTENTION 需要检查 readinto 的返回值，如果字节数小于缓存区，表明数据被截断或者破坏了
+ """
+import os.path
+# 直接读取入 bytearray
+def read_into_buffer(filename):
+    buf = bytearray(os.path.getsize(filename))
+    with open(filename, 'rb') as f:
+        f.readinto(buf)
+    return buf
+# 使用用例
+with open('data.bin', 'wb') as f:
+    f.write(b'Hello World')
+buf = read_into_buffer('data.bin') # bytearray(b'Hello World')
+# 使用 memoryview 通过零复制方式对已存在的缓存区执行切片操作,甚至还能修改内容
+m1 = memoryview(buf)
+m1[-5:] # <memory at 0x100681390>
+m1[:] = b'WORLD'
+buf # bytearray(b'Hello WORLD')
