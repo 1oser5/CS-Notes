@@ -401,3 +401,25 @@ for x in y():
 for y in yf():
     print(y) # 0, 1, 2, 3, 4, 5
 ```
+
+# 12.魔术方法__dict__
+
+使用 `__dict__` 来为类添加属性
+
+一个简单的例子
+```python
+class A(object):
+    def __init__(self,d):
+        self.name = d['name']
+        self.sex = d['sex']
+        self.address = d['address']
+```
+上面是一个添加实例属性的例子。如果实例属性不多，这样做可行，但如果有很多实例属性，需要定义一个更高效的做法，这时候就可以引出 `__dict__` 
+```python
+class A(object):
+    def __init__(self, d):
+        self.__dict__.update(d)
+d = {"name": "Bob","sex":"M","address":"somewhere"}
+a = A(d)
+d.__dict__ # {"name": "Bob","sex":"M","address":"somewhere"}
+```
