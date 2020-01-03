@@ -170,3 +170,115 @@ class Circle:
 c = Circle(4.0)
 c.radius # 4.0
 c.area # 50.26548245743669
+
+# 7.调用父类方法
+""" 使用 super 调用父类超类方法
+Python使用解析顺序表（MRO）进行继承，这里列表就是简单地基类线性表
+其使用 C3 线性算法实现，遵守如下三条准则：
+1.子类先于父类被检查
+2.多个父类会根据表中顺序被检查
+3.下个类存在合法选择，选择第一个父类
+"""
+class A1(object):
+    def spam(self):
+        self.x = 1
+class B1(A1):
+    def spam(self):
+        super().spam() # 调用 A1 spam 方法
+# 常见用法是保证 父级 __init__ 正常工作
+class I(object):
+    def __init__(self):
+        self.x = 1
+class IChildren(I):
+    def __init__(self):
+        self.y = 1
+        super().__init__()
+i = IChildren()
+IChildren.__mro__ # 查看继承链
+
+# 8.子类中扩展property
+""" 需要复写全部 property 时，写法和定义一样，
+只需要覆盖某个 property 时，有些区别
+"""
+class P2(object):
+    def __init__(self, name):
+        self.name = name
+    # Getter function
+    @property
+    def name(self):
+        return self._name
+
+    # Setter function
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, str):
+            raise TypeError('Expected a string')
+        self._name = value
+
+    # Deleter function
+    @name.deleter
+    def name(self):
+        raise AttributeError("Can't delete attribute")
+# 全部重写
+class SubPerson(P2):
+    @property
+    def name(self):
+        print('Getting name')
+        return super().name
+
+    @name.setter
+    def name(self, value):
+        print('Setting name to', value)
+        super(SubPerson, SubPerson).name.__set__(self, value)
+
+    @name.deleter
+    def name(self):
+        print('Deleting name')
+        super(SubPerson, SubPerson).name.__delete__(self)
+# 部分重写
+class SubPerson1(P2):
+    @P2.name.getter # 可以正常运行，标红可能是因为 property 是动态计算的
+    def name(self):
+        print('Getting name')
+        return super().name
+
+# 10.使用延迟计算
+""" 将一个只读属性定义为 property 使其只有在访问时才计算结果，并把计算值保存下来 """
+# 描述器
+class LazyProperty(object):
+    def __init__(self, func):
+        self.func = func
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        else:
+            value  = self.func(instance) # 本来 func 就接受一个入参 self
+            setattr(instance, self.func.__name__, value)
+            return value
+class Circle1(object):
+    def __init__(self, radius):
+        self.radius = radius
+    @LazyProperty
+    def area(self):
+        print('Computing area')
+        return math.pi * self.radius ** 2
+    @LazyProperty
+    def perimeter(self):
+        print('Computing perimeter')
+        return 2 * math.pi * self.radius
+# 这样使得调用只会计算一次
+
+# 11.简化数据结构的初始化
+""" 使用一个基类的 init 来简化后续初始化工作 """
+# 基类
+class Structure1(object):
+    _field = [] # 接收参数
+    def __init__(self, *args):
+        if len(args) != len(self._field):
+            raise TypeError('Excepted {} arguments'.format(len(self._field)))
+        for name, value in zip(self._field, args):
+            setattr(self, name, value)
+# 实例
+class Some(Structure1):
+    _field = ['a', 'b']
+
