@@ -191,3 +191,164 @@ class Spam(metaclass=Singleton):
 a = Spam()
 b = Spam()
 a is b # True
+
+# 16.*args 和 kwargs 的强制签名
+""" 使用 inspect 模块的 Signature 和 Parameter 来进行参数检查 """
+# 首先使用 signature 创建签名对象
+from inspect import Signature, Parameter
+params = [ Parameter('x', Parameter.POSITIONAL_OR_KEYWORD),
+         Parameter('y', Parameter.POSITIONAL_OR_KEYWORD, default=42),
+         Parameter('z', Parameter.KEYWORD_ONLY, default=None) ]
+sig = Signature(params)
+print(sig)  # (x, y=42, *, z=None)
+# 使用
+def func(*args, **kwargs):
+    bind_value = sig.bind(*args, **kwargs)
+    for name, value in bind_value.arguments.items():
+        print(name, value)
+func(1,2,3) 
+func(1,2,3,4) # ERROR
+# 强制所有子类必须提供特定参数签名的例子
+def make_sig(*names):
+    params = [Parameter(name, Parameter.POSITIONAL_OR_KEYWORD) for name in names]
+    return Signature(params)
+
+class Sign(object):
+    __signature__ = make_sig()
+    def __init__(self, *args, **kwargs):
+        a = self.__signature__.bind(*args, **kwargs)
+        for name, value in a.arguments.items():
+            print(name, value)
+# usage
+class Stock1(Sign):
+    __signature__ = make_sig('name', 'shares', 'price')
+
+
+# 17.通过元类来进行参数或者方法的监听
+class MyType(type):
+    # 定义 new
+    def __new__(cls, clsname, bases, clsdict):
+        return super().__new__(cls, clsname, bases, clsdict)
+    # 定义 iit
+    def __init__(self, clsname, bases, clsdict):
+        super().__init__(clsname, bases, clsdict)
+
+# 简单例子，不允许驼峰名称
+class NoMixType(type):
+    def __new__(cls, clsname, bases, clsdict):
+        for name, value in clsdict.items():
+            if name.lower() != name:
+                raise TypeError('Bad attribute name' + name)
+        return super().__new__(cls, clsname, bases, clsdict)
+class Root(metaclass=NoMixType):
+    pass
+
+class So(Root):
+    pass
+
+# 18.以编程方式创建类
+def __init__(self, name, shares, price):
+    self.name = name
+    self.shares = shares
+    self.price = price
+def cost(self):
+    return self.shares * self.price
+cls_dict = {
+    '__init__' : __init__,
+    'cost':cost
+}
+import types
+# 动态定义类
+Stock2 = types.new_class('Stock',(), {},lambda ns: ns.update(cls_dict))
+# 需要追加设置一下 __module__ 属性
+Stock2.__module__ = __name__
+# 传输元类
+import abc
+Stock2 = types.new_class('Stock',(),{'metaclass':abc.ABCMete},lambda ns: ns.update(cls_dict))
+
+# 19.在定义时初始化类成员
+import operator
+# 定义初始化元类，在类定义的时候，init函数会调用一次
+class StructTupleMeta(type):
+    def __init__(cls, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for n, name in enumerate(cls._field):
+            setattr(cls, name, property(operator.itemgetter(n)))
+# 创建类,使用new是因为init在实例创建之后调用，而tuple不可变
+class Struct2(tuple,metaclass=StructTupleMeta):
+    _field = []
+    def __new__(cls, **args):
+        if len(args) != len(cls._field):
+            raise AttributeError('Need arguments {cls._field}')
+        return super().__new__(cls, args)
+# 用例
+class Stock(Struct2):
+    _field = ['name','price','shares']
+
+# 20.避免重复的属性方法
+""" 可以使用 property 进行定义检查变量，但是这样会有很多代码冗余，使用一个函数效果更好 """
+# 属性定义函数
+def type_property(name, excepted_type):
+    strong_name = '_' + name
+    @property
+    def prop(self):
+        return getattr(self, strong_name)
+    @prop.setter
+    def prop(self, value):
+        if not isinstance(value, excepted_type):
+            raise TypeError('{} must be a {}'.format(name, excepted_type))
+        setattr(self, strong_name, value)
+    return prop
+## 用例
+class Person(object):
+    name = type_property('name', str)
+    def __init__(self, name):
+        self.name = name
+# 可以使用 partial 进行简化
+import functools
+String = functools.partial(type_property, excepted_type=str)
+
+# 22.管理上下文简单方法
+import time
+from contextlib import contextmanager
+# enter 方法执行 yield 之前的代码， exit 方法执行 yield 之后的代码
+@contextmanager
+def timethis1(label):
+    start = time.time()
+    try:
+        yield
+    finally:
+        end = time.time()
+        print('{}:{}'.format(label, end-start))
+# 使用上述特性实现一个事务的列表
+@contextmanager
+def list_transaction(orig_list):
+    working = list(orig_list)
+    yield working
+    orig_list[:] = working
+items = [1, 2, 3]
+with list_transaction(items) as working:
+    working.append(4)
+    working.append(5)
+items # [1,2,3,4,5]
+with list_transaction(items) as working:
+    working.append(6)
+    working.append(7)
+    raise RuntimeError('oops')
+items # [1,2,3,4,5]
+# 可以不使用 contextmanager,手动写 enter 和 exit
+
+# 23.局部变量中执行代码
+""" exec 函数的范围是拷贝实际局部变量组成的一个字典,因此执行它不会修改局部变量的值，你需要一些操作 """
+def test1():
+    a = 12
+    exec('b = a + 1')
+    print(b) # ERROR
+# 如果想获得 b 的值
+def test2():
+    a = 12 
+    loc = locals()
+    exec('b = a + 1')
+    b = loc['b']
+    print(b) # 14
+
