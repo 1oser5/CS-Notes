@@ -41,3 +41,7 @@ systeminfo
 然后直接打开，安装完成之后 Jenkins 将自动打开一个网页，复制相应密钥路径，在搜索中输入并打开，复制相应的字符串，登录成功后选择新手入门插件。
 
 安装相应插件之后，在补充安装一个 Blue Ocean 即可。
+
+在使用 jenkins 运行 windows 脚本时，选择 windows batch command，而不是 shell。
+
+记得在 Windows 的服务中，把jenkins 的用户修改为 管理员，这样才能正常的进行 Git 操作。
