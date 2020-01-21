@@ -37,5 +37,5 @@ mkdir ~/.vim
 git clone https://github.com/flazz/vim-colorschemes.git ~/.vim
 ```
 后续还是需要配置 vim 个人文件，但是插件会提供大量的主题可供挑选。
-121
 
+来自本地的修改
