@@ -325,3 +325,21 @@ liunx 打包机上也使用类似方式进行连接，成功连接。
 目前为止，jenkins 和 gitlab 的联动完成，可以手动更新代码库。
 
 现在拓展一个发送邮箱功能。
+
+
+修改 jenkins 默认插件下载源
+
+1.打开 `vi hudson.model.UpdateCenter.xml`
+
+修改为 
+```
+<?xml version='1.1' encoding='UTF-8'?>
+<sites>
+  <site>
+    <id>default</id>
+    <url>https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json</url>
+  </site>
+</sites>
+```
+
+重新启动即可
