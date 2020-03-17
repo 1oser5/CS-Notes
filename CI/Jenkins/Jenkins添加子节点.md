@@ -27,3 +27,30 @@ Jenkins 配置中需要将 master 的密钥添加到 slave 机器，使得其可
 > 注意要在设置中将对应连接打开
 
 然后下载对应的 jar 文件，将文件内部的 url 改为 master 路由即可
+
+
+如果没有 `Launch agent by connecting it to the master` 的启动方式，则需要在 `全局安全设置` 中的 `代理` 部分，将代理协议都勾选上
+
+![avator](../../pic/jenkins-slave-agent.jpg)
+
+下载jar之后双击打开，但是没法连接，提示报错为
+```
+java.io.IOException:http://localhost:8080/ provided port:37583 is not reachable
+
+at org.jenkinsci.remoting.engine.JnlpAgentEndpointResolver.resolve(JnlpAgentEndpointResolver.java:287)
+
+at hudson.remoting.Engine.innerRun(Engine.java:523)
+
+at hudson.remoting.Engine.run(Engine.java:474)
+```
+则是因为对应防火墙的端口未开启，开启对应防火墙端口即可连接
+
+添加端口
+```
+firewall-cmd --permanent --add-port=37583/tcp
+```
+
+重启
+```
+firewall-cmd --reload
+```
