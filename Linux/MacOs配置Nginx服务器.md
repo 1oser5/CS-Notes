@@ -129,4 +129,4 @@ nginx -s reload
 
 > 注意默认端口号为 443
 
-如果 403 报错了，先去看错误日志，如果是权限问题，需要修改 `/usr/local/etc/nginx/nginx.conf` 的第一行 user, 改为 `root`。然后在使用 `nginx -c /usr/local/etc/nginx/nginx.conf` 重启，使用 reload 不行。
+如果 403 报错了，先去看错误日志，如果是权限问题，需要修改 `/usr/local/etc/nginx/nginx.conf` 的第一行 user, 改为 `root`。然后在使用 `nginx -c /etc/nginx/nginx.conf` 重启，使用 reload 不行。

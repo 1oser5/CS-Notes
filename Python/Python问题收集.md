@@ -423,3 +423,19 @@ d = {"name": "Bob","sex":"M","address":"somewhere"}
 a = A(d)
 d.__dict__ # {"name": "Bob","sex":"M","address":"somewhere"}
 ```
+
+# 13.Python类的__slots__属性
+
+当你需要大量实例化一个类时，`__slots__ ` 属性能极大地减少实例所占内存。其会阻止在实例化类时为实例分配 dict。换而言之，使用 `__slots__` 属性后的类，无法使用 `__dict__` 属性。其原理是当你定义 `__slots__` 之后，Python 会用一种更紧凑的内部表示实例，通过一个固定大小的数组来构建，而不是为每一个实例定义一个字典，这样解释了为什么 `__dict__` 无法使用。
+
+
+与此同时，你的实例无法创建新的变量
+```python
+class Date(object):
+    __slots__ = ['year', 'month', 'day]
+
+d = Date()
+d.year = 2020 # Success
+d.hour = 12 # Fail
+```
+当然其作为有一个内存优化工具，只适用于大量实例，我指上百万个，不建议冲动的使用它，因为Python很多特性依赖于普通的基于字典实现的类，定义了 `__slots__` 之后将不再支持一些普通类特性。
