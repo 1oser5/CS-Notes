@@ -1,5 +1,5 @@
 
-## 1. if \__name__ == "\__main__" 做了什么 
+## 1. if \__name__ == "\__main__" 做了什么
 
 问题来源：stackoverflow 高分 Python 问题
 
@@ -133,7 +133,7 @@ https://zhuanlan.zhihu.com/p/28010894
 
 ```python
 #获得当前 python 版本
-In [5]: sys.version_info                                                        
+In [5]: sys.version_info
 Out[5]: sys.version_info(major=3, minor=7, micro=0, releaselevel='final', serial=0)
 ```
 
@@ -176,19 +176,19 @@ str 类型采用的 `ASCII` 编码，也就是说它无法表示中文
 字符串默认采用的ASCII编码，如果要显示声明为 `unicode` 类型的话，需要在字符串前面加上 `'u'` 或者 `'U'`。例如：
 
 ```python
-u = u'汉'  
-print repr(u) # u'\u6c49'  
-s = u.encode('UTF-8')  
-print repr(s) # '\xe6\xb1\x89'  
-u2 = s.decode('UTF-8')  
-print repr(u2) # u'\u6c49' 
+u = u'汉'
+print repr(u) # u'\u6c49'
+s = u.encode('UTF-8')
+print repr(s) # '\xe6\xb1\x89'
+u2 = s.decode('UTF-8')
+print repr(u2) # u'\u6c49'
 ```
 
 对于编码的经验总结：
 
 1.在python文件头声明编码格式 ；
 ```
-#-*- coding: utf-8 -*-  
+#-*- coding: utf-8 -*-
 ```
 2.将字符串统一声明为 `unicode` 类型，即在字符串前加`u`或者 `U`;
 
@@ -414,7 +414,7 @@ class A(object):
         self.sex = d['sex']
         self.address = d['address']
 ```
-上面是一个添加实例属性的例子。如果实例属性不多，这样做可行，但如果有很多实例属性，需要定义一个更高效的做法，这时候就可以引出 `__dict__` 
+上面是一个添加实例属性的例子。如果实例属性不多，这样做可行，但如果有很多实例属性，需要定义一个更高效的做法，这时候就可以引出 `__dict__`
 ```python
 class A(object):
     def __init__(self, d):
@@ -439,3 +439,49 @@ d.year = 2020 # Success
 d.hour = 12 # Fail
 ```
 当然其作为有一个内存优化工具，只适用于大量实例，我指上百万个，不建议冲动的使用它，因为Python很多特性依赖于普通的基于字典实现的类，定义了 `__slots__` 之后将不再支持一些普通类特性。
+
+
+# 14.Python中的几种取整方法
+
+## 向下取整
+向下取整调用 `int()` 函数
+```python
+>>> a = 3.75
+>>> int(a)
+3
+```
+## 四舍五入
+
+四舍五入调用 `round()` 函数
+```python
+>>> round(3.25)
+>>> round(4.85)
+3.0
+5.0
+```
+## 向上取整
+
+向上取整需要用到 `math` 模块中的 `ceil()` 方法
+
+```python
+>>> import math
+>>> math.ceil(3.25)
+4.0
+>>> math.ceil(3.75)
+4.0
+>>> math.ceil(4.85)
+5.0
+```
+
+## 分离整数和小数部分
+分离小数和整数需要用到 `math` 模块中的 `modf()` 方法，其返回一个包含小数和整数部分的元组
+```python
+>>> import math
+>>> math.modf(3.25)
+(0.25, 3.0)
+>>> math.modf(3.75)
+(0.75, 3.0)
+>>> math.modf(4.2)
+(0.20000000000000018, 4.0)
+```
+最后的一个返回值不是 `0.2` 涉及到 **浮点数在计算机中的表示**，这里就不展开了。
