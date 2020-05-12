@@ -384,7 +384,7 @@ if u:
     return True
 ```
 
-# 11.yield和yield from
+## 11.yield和yield from
 
 yield form 本质上是将生成器或者可迭代对象进行解析后返回，可以这样来理解
 
@@ -402,7 +402,7 @@ for y in yf():
     print(y) # 0, 1, 2, 3, 4, 5
 ```
 
-# 12.魔术方法__dict__
+## 12.魔术方法__dict__
 
 使用 `__dict__` 来为类添加属性
 
@@ -424,7 +424,7 @@ a = A(d)
 d.__dict__ # {"name": "Bob","sex":"M","address":"somewhere"}
 ```
 
-# 13.Python类的__slots__属性
+## 13.Python类的__slots__属性
 
 当你需要大量实例化一个类时，`__slots__ ` 属性能极大地减少实例所占内存。其会阻止在实例化类时为实例分配 dict。换而言之，使用 `__slots__` 属性后的类，无法使用 `__dict__` 属性。其原理是当你定义 `__slots__` 之后，Python 会用一种更紧凑的内部表示实例，通过一个固定大小的数组来构建，而不是为每一个实例定义一个字典，这样解释了为什么 `__dict__` 无法使用。
 
@@ -435,22 +435,21 @@ class Date(object):
     __slots__ = ['year', 'month', 'day]
 
 d = Date()
-d.year = 2020 # Success
 d.hour = 12 # Fail
 ```
 当然其作为有一个内存优化工具，只适用于大量实例，我指上百万个，不建议冲动的使用它，因为Python很多特性依赖于普通的基于字典实现的类，定义了 `__slots__` 之后将不再支持一些普通类特性。
 
 
-# 14.Python中的几种取整方法
+## 14.Python中的几种取整方法
 
-## 向下取整
+### 向下取整
 向下取整调用 `int()` 函数
 ```python
 >>> a = 3.75
 >>> int(a)
 3
 ```
-## 四舍五入
+### 四舍五入
 
 四舍五入调用 `round()` 函数
 ```python
@@ -459,7 +458,7 @@ d.hour = 12 # Fail
 3.0
 5.0
 ```
-## 向上取整
+### 向上取整
 
 向上取整需要用到 `math` 模块中的 `ceil()` 方法
 
@@ -473,7 +472,7 @@ d.hour = 12 # Fail
 5.0
 ```
 
-## 分离整数和小数部分
+### 分离整数和小数部分
 分离小数和整数需要用到 `math` 模块中的 `modf()` 方法，其返回一个包含小数和整数部分的元组
 ```python
 >>> import math
@@ -485,3 +484,17 @@ d.hour = 12 # Fail
 (0.20000000000000018, 4.0)
 ```
 最后的一个返回值不是 `0.2` 涉及到 **浮点数在计算机中的表示**，这里就不展开了。
+
+
+## 15.Python Print 编码问题
+
+在使用 print 输出的时候报错 `UnicodeEncodeError: 'gbk' codec can't encode character '\xbb' in position 0: illegal multibyte sequence`
+我已经明确将字符串设置为 `utf-8`，但是为什么会使用 gbk 报错，在网上查到的结果是
+> python 函数自身有限制，不能打印所有的 Unicode 字符
+
+print 函数的局限就是 Python 默认编码的局限，因为系统是 `winserver`，所有默认编码不是 `utf-8`，修改编码之后，不会报错但是所有中文显示乱码。
+
+```python
+sys.stdout.reconfigure(encoding='utf-8')
+```
+最后发现将其改为 `gb18030` 解决问题
