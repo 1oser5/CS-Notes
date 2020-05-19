@@ -4,7 +4,7 @@
 
 ## 过程
 
-首先要进行证书自签，一键生成自签证书` sudo openssl req -x509 -nodes -days 36500 -newkey rsa:2048 -keyout /root/project/ssl/nginx.key -out /root/project/ssl/nginx.crt
+首先要进行证书自签，一键生成自签证书` sudo openssl req -x509 -nodes -days 36500 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
 `
 
 会让你输入一些问题
