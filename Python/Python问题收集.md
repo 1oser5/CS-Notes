@@ -390,7 +390,7 @@ yield form 本质上是将生成器或者可迭代对象进行解析后返回，
 
 `yield from iterable` 本质上等于 `for item in iterable: yield item`。
 
-下面是一个简单的离职
+下面是一个简单的例子
 ```python
 def y():
     yield range(5)
@@ -498,3 +498,38 @@ print 函数的局限就是 Python 默认编码的局限，因为系统是 `wins
 sys.stdout.reconfigure(encoding='utf-8')
 ```
 最后发现将其改为 `gb18030` 解决问题
+
+
+## 16.Python lru_cache函数
+Python第三方库functools中提供了很多高阶函数，其中就有 lru_cahce 函数。其作为一个装饰器，能够做到为函数提供缓存功能，在下次相同调用的情况下，直接返回上一次的计算结果。以节约开销和I/O函数的调用。
+
+lru_cache 有两个参数:
+
++ maxsize: 最大存储数，默认为 128。如果设置为None则LRU特性被禁用，缓存将无限长。当其为2的幂时性能较好。
++ typed: 是否区分参数种类，默认为False，如果设置为True，则会将 f(3) 和 f(3.0) 视为不同的缓存。
+
+### LRU 缓存
+
+最久未使用缓存指 `最近的调用是即将到来的调用的最佳预测因子` 是性能最好，说白了就是一直预知未来的理想算法。如果有缓存限制大小，则保证缓存不会无限。
+
+### 例子
+下面举一个简单的例子
+```python
+from functools import lru_cache
+@lru_cache(None)
+def add(x, y):
+    print("calculating: %s + %s" % (x, y))
+    return x + y
+
+print(add(1, 2))
+print(add(1, 2))
+print(add(2, 3))
+
+# 输出结果
+calculating: 1 + 2
+3
+3
+calculating: 2 + 3
+5
+```
+可以看出，当第二次调用add(1, 2) 时，并没有真正执行函数体，而是直接返回缓存的结果。
