@@ -9,11 +9,11 @@
 
 然后选择好对应的操作系统
 
-![avator](../pic/vm-centos7.jpg)
+![avator](../../pic/vm-centos7.jpg)
 
 选择下一步，然后选择在自定义设置中选择 ISO
 
-![avator](../pic/vm-chooseCD.jpg)
+![avator](../../pic/vm-chooseCD.jpg)
 
 因为公司之前有人配置过 Centos7，所以我只需要选择对应的镜像即可，如果数据中没有对应操作系统镜像，去官网下载并上传即可。
 

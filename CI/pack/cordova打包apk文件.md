@@ -18,11 +18,11 @@ java -version
 
 到 Gradle 官网，找到下载列表
 
-![avator](../pic/download-gradle.png)
+![avator](../../pic/download-gradle.png)
 
 点击上图的 complete，进入下载页面，复制下载链接。
 
-![avator](../pic/download-gradle-link.png)
+![avator](../../pic/download-gradle-link.png)
 
 在 linux 命令行中输入
 ```
@@ -55,7 +55,7 @@ g
 ```
 
 
-输入 
+输入
 ```
 gradle -v
 ```
@@ -214,7 +214,7 @@ source /etc/profile
 npm install -g cordova
 ```
 
-运行 `javac -version` 报错，但是运行 `java -version`可以正常显示版本号，好像之前安装的是 `jre` 使用 
+运行 `javac -version` 报错，但是运行 `java -version`可以正常显示版本号，好像之前安装的是 `jre` 使用
 ```
 yum install java-devel
 ```

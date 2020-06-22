@@ -30,9 +30,9 @@ yum install jenkins
 
 发现 leader 给的不是 root 账号，只是普通账号。
 
-只能 
+只能
 
-``` 
+```
 sudo yum install jenkins
 ```
 
@@ -87,7 +87,7 @@ yum -y update
 ```
 service jenkins start
 ```
-![avator](../pic/start-jenkins.png)
+![avator](../../pic/start-jenkins.png)
 
 其默认端口为 8080，默认用户为 jenkins
 
@@ -97,7 +97,7 @@ service jenkins start
 vi /etc/sysconfig/jenkins
 ```
 
-返回 ok 之后，发现外网仍然无法访问改地址，但是使用 
+返回 ok 之后，发现外网仍然无法访问改地址，但是使用
 
 ```
 curl localhost:8080
@@ -120,7 +120,7 @@ firewall-cmd –zone=public –add-port=8080/tcp –permanent
 
 修改后输入地址可以看到 jenkins 正常启动
 
-![avator](../pic/join-jenkins.png)
+![avator](../../pic/join-jenkins.png)
 
 基本部署完成。
 
@@ -154,19 +154,19 @@ https://blog.csdn.net/boling_cavalry/article/details/78943061
 
 1.登录GitHub，进入"Settings"页面，点击左下角的"Developer settings"，如下图：
 
-![avator](../pic/github-developer.png)
+![avator](../../pic/github-developer.png)
 
 2.跳转到"Developer settings"页面后，点击左下角的“Personal access tokens”，如下图：
 
-![avator](../pic/personal-access-tokens.png)
+![avator](../../pic/personal-access-tokens.png)
 
 3.跳转到"Personal access tokens"页面后，点击右上角的"Generate new token"按钮，如下图：
 
-![avator](../pic/generate-new-token.png)
+![avator](../../pic/generate-new-token.png)
 
 4.可能会提示输入GitHub密码，输入后跳转到创建token的页面，如下图所示，输入title，再勾选"repo"和"admin:repo_hook"，再点击底部的"Generate token"按钮，就能产生一个新的access token，将此字符串复制下来，后面jenkins任务中会用到
 
-![avator](../pic/new-access-token.png)
+![avator](../../pic/new-access-token.png)
 
 
 ### webhook地址
@@ -179,11 +179,11 @@ webhook 是通知 Jenkins 时的请求地址，用来写在 GitHub 上，GitHub 
 
 2.在工程主页面点击右上角的"Settings"，再点击左侧"Webhooks"，然后点击“Add webhook”，如下图：
 
-![avator](../pic/add-webhooks.jpeg)
+![avator](../../pic/add-webhooks.jpeg)
 
 3.如下图，在"Payload URL"位置填入webhook地址，再点击底部的"Add webhook按钮"，这样就完成webhook配置了，今后当前工程有代码提交，GitHub就会向此webhook地址发请求，通知Jenkins构建：
 
-![avator](../pic/set-webhook.jpeg)
+![avator](../../pic/set-webhook.jpeg)
 
 ## Jenkins 设置
 
@@ -193,15 +193,15 @@ webhook 是通知 Jenkins 时的请求地址，用来写在 GitHub 上，GitHub 
 
 3.在系统设置页面找到"GitHub"，配置一个"GitHub Server"，如下图，“API URL"填写"https://api.github.com”，“Credentials"位置如下图红框所示，选择"Add->Jenkins”
 
-![avator](../pic/set-github.jpeg)
+![avator](../../pic/set-github.jpeg)
 
 4.弹出的页面中，“Kind"选择"Secret text”，"Secret"填入前面在GitHub上生成的Personal access tokens，Description随便写一些描述信息，如下图：
 
-![avator](../pic/add-credential.jpeg)
+![avator](../../pic/add-credential.jpeg)
 
 5.填写完毕后，点击右侧的"Test connection"按钮，如果信息没有填错，显示的内容如下图所示：
 
-![avator](../pic/test-conn.jpeg)
+![avator](../../pic/test-conn.jpeg)
 
 6.点击页面最底部的"保存"按钮
 
@@ -210,7 +210,7 @@ webhook 是通知 Jenkins 时的请求地址，用来写在 GitHub 上，GitHub 
 
 重启服务器发现返回的是 ok，但是外网仍然无法访问。
 
-使用 curl 语句发现 
+使用 curl 语句发现
 
 ```
 Failed connect to localhost:8080; 拒绝连接
@@ -331,7 +331,7 @@ liunx 打包机上也使用类似方式进行连接，成功连接。
 
 1.打开 `vi hudson.model.UpdateCenter.xml`
 
-修改为 
+修改为
 ```
 <?xml version='1.1' encoding='UTF-8'?>
 <sites>

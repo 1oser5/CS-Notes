@@ -29,7 +29,7 @@ nohup python my.py >> /usr/local/python/xxf/my.log 2>&1 &
 
 在你运行起来之后会给你一个进程号
 
-![avator](../pic/outhup进程号.jpg)
+![avator](../../pic/outhup进程号.jpg)
 
 ### 查看运行进程
 
@@ -43,7 +43,7 @@ nohup python my.py >> /usr/local/python/xxf/my.log 2>&1 &
 
 + a:显示所有程序
 + u:以用户为主的格式来显示
-+ x:显示所有程序，不以终端机来区分 
++ x:显示所有程序，不以终端机来区分
 
 ```
 ps -aux|grep xxx.py

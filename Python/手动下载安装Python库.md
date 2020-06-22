@@ -6,11 +6,11 @@
 
 首先进入 PyPi 搜索 PyQt5，点击下面红框内的按钮
 
-![avator](../pic/pypi-download-file.jpg)
+![avator](../../pic/pypi-download-file.jpg)
 
 然后会看到几个不同平台的文件，注意这里有俩种文件模式， Wheel 模式是我们需要的下载的，文件名后面会有平台，记得看清楚自己是什么平台。最下面的 Source 则是源码。
 
-![avator](../pic/pypi-choose-plantom.jpg)
+![avator](../../pic/pypi-choose-plantom.jpg)
 
 在下载完成之后，使用 pip 工具安装即可，pip本地安装的命令为
 ```

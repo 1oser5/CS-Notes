@@ -11,7 +11,7 @@ REST 全称为 Representational State Transfer ，即表现层状态转移，听
 
 使用 Restful-API 可以做到使用一套统一的接口为不同平台提供服务
 
-![avator](../pic/系统设计-理解restful.jpg)
+![avator](../../pic/系统设计-理解restful.jpg)
 
 GET 用来获取资源，
 POST 用来新建资源（也可以用于更新资源），
