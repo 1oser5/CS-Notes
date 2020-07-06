@@ -57,7 +57,7 @@ npm run bundle-ios
 新版的 CocoaPods 不允许用pod repo add直接添加master库了，但是依然可以：
 
 ```
-cd ~/.cocoapods/repos 
+cd ~/.cocoapods/repos
 pod repo remove master
 git clone https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git master
 
@@ -118,4 +118,4 @@ $ keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -
 
 完整流程图
 
-![avator](../../pic/react-native打包ipa.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/react-native打包ipa.jpg)

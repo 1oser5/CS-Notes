@@ -117,7 +117,7 @@ classmethod 方法和 metaclass 方法是等效的，classmethod 的优先级较
 
 类方法和实例方法首参数指向：
 
-![avator](../../pic/staticmethod-classmethod.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/staticmethod-classmethod.jpg)
 
 > 类方法和静态方法的不同在于存在类的继承的情况下对多态的支持不同。
 

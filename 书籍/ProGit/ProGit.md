@@ -182,14 +182,14 @@
 许多人习惯用复制整个项目的方式来进行本地的版本控制，这样有效，但是未免会造成版本控制混乱，取名麻烦，复制时间消耗等问题。
 
 之后人们也开发出了用简单数据库来记录文件差异的方式。
-![avator](../../pic/local-version-control.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/local-version-control.png)
 其中最流行的就是 rcs，许多计算机系统还看得到它的声影。它通过某种特定的补丁文件，记录对应文件修改前后的内容变化。每次修订完之后，rcs 将不断打补丁来计算各版本的文件内容。
 
 ### 集中化版本控制系统
 
 那要在不同的系统中，或者不同的设备中进行版本控制呢？于是集中化版本控制系统（Centralized Version Control Systems, CVCS）出现了。类似 CVS, Subversion 等，都有一个集中管理的服务器，用户通过客户端统一向该服务器下载文件或者更新文件。
 
-![avator](../../pic/centralized-version-control.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/centralized-version-control.png)
 
 这种版本控制有一定好处，每个人可以在一定程度上看到项目上其他人在干什么，而管理员也可以轻松的分配权限，管理起来比本地版本控制容易得多。
 
@@ -199,7 +199,7 @@
 
 于是分布式版本控制系统（Distributed Version Control System, DVCS）出现了。客户端不止提取最新版本的快照，而是将整个代码仓库进行镜像。这样一来，任何协调工作的服务器故障了，都可以使用任意一台电脑的本地仓库进行恢复。
 
-![avator](../../pic/distributed-version-control.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/distributed-version-control.png)
 
 ## Git基础
 
@@ -208,11 +208,11 @@ Git 与其他 DVCS 系统的差异
 ### 直接记录快照，而非差异比较
 
 Git 只关心文件数据的整体是否发生变化，其他系统则只关心文件具体内容的差异。
-![avator](../../pic/svn-diff.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/svn-diff.png)
 
 Git 并不保存这些文件的差异数据，相对来说，Git 更像是把变化的文件快照后，记录在一个微型的文件系统中，每次提交更像后，他会总览一遍所有文件的指纹信息并对修改了的文件做一快照，然后保存执行这个快照的索引。为了提高性能，如果文件没有变化，则只保存对上一次快照的链接。
 
-![avator](../../pic/git-diff.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/git-diff.png)
 
 ### 几乎所有的操作都是本地执行
 
@@ -244,7 +244,7 @@ Git 的大多数操作都只是在 Git 数据库中添加数据，因为多数�
 
 Git 保存文件的三个工作区域： Git 的工作目录，暂存目录，本地仓库。
 
-![avator](../../pic/work.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/work.png)
 
 每个项目都有一个 Git 目录（如果是 git clone 则 .git 是 Git 目录，如果是 git clone --bare，新建目录本身急速 Git 目录）。Git 目录用来保存元数据和对象数据库。该目录非常重要，每次克隆镜像仓库其实都是克隆该目录中的数据。
 
@@ -285,7 +285,7 @@ Git 需要你输入一下额外信息的时候，会自动调用一个外部编�
 ```
 git config --global core.editor emacs
 ```
-  
+
 ### 比较差异工具
 
 在合并冲突是使用哪种差异分析工具，必须要修改为 vimdiff 的话
@@ -352,7 +352,7 @@ git clone git://github.com/schacon/grit.git my_grit
 
 克隆的所有文件都是已跟踪文件。
 
-![avator](../../pic/git-file-status-lifecycyle.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/git-file-status-lifecycyle.png)
 
 ### 检查当前文件状态
 
@@ -491,7 +491,7 @@ doc/**/*.txt
 ### 查看已暂存和为暂存的更新
 
 ```
-$ git diff 
+$ git diff
 ```
 可以查看尚未暂存的文件更新了哪些部分
 
@@ -1171,15 +1171,15 @@ Git 分支管理的轻便让他在一众版本控制系统中脱颖而出。
 
 仓库中各个对象保存的数据和相互关系看起像如图 3-1
 
-![avator](../../pic/progit-data-struction.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-data-struction.png)
 
 commit 对象会包含一个指向上次提交的指针。
 
-![avator](../../pic/progit-commit-parent.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-commit-parent.png)
 
 分支其实就是一个默认指向最新 commit 的指针，Git 会使用 master 作为分支的默认名字。
 
-![avator](../../pic/progit-commit-branch.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-commit-branch.png)
 
 Git 新建分支可以使用 `git branch` 命令。
 ```shell
@@ -1188,12 +1188,12 @@ git branch testing
 
 这会在当前 commit 对象上新建一个分支指针。
 
-![avator](../../pic/progit-add-branch.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-add-branch.png)
 
 Git 通过一个叫 `HEAD` 的特殊指针，来告诉你你目前在哪个分支工作。如果你仅仅只是新建了分支，Git 不会把你的当前的工作目录切换成分支，你依然在 master 分支工作。
 gitp
 
-![avator](../../pic/progit-still-in-master.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-still-in-master.png)
 
 使用 `git checkout` 命令切换分支
 ```
@@ -1202,11 +1202,11 @@ git checkout testing
 
 切换到 testing 分支之后进行一次提交，那么历史记录看上去会是这样
 
-![avator](../../pic/progit-commit-on-testing.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-commit-on-testing.png)
 
 我们会到 master 分支，作出修改后提交，然后我们的提交历史就出现了分叉。
 
-![avator](../../pic/progit-diff-branch.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-diff-branch.png)
 
 也就是说切换分支的操作，只需要 `git checkout` 和 `git brance` 就可以完成。
 
@@ -1221,7 +1221,7 @@ git checkout testing
 
 假设我们在完成一个项目，做了几次提交
 
-![avator](../../pic/pro-git-little-commit.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/pro-git-little-commit.png)
 
 现在你需要修补 #53 的问题，要新建并切换到该分支
 ```
@@ -1234,7 +1234,7 @@ git branch iss53
 git checkout iss53
 ```
 
-![avator](../../pic/porgit-branch-iss53.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/porgit-branch-iss53.png)
 
 当你在 `iss53` 分支干的热火朝天的时候，你老板打电话来让你紧急修复一下 `master` 分支上的某个 bug。
 
@@ -1244,7 +1244,7 @@ git checkout -b hoxift
 ```
 在进行快速修复之后，你提交了记录
 
-![avator](../../pic/progit-commit-on-hotfix.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-commit-on-hotfix.png)
 
 之后你需要将其合并到 `master` 分支，并发布到服务器，使用 `git merge` 命令来进行合并
 ```
@@ -1262,7 +1262,7 @@ Fast-forward
 
 合并后历史记录变成了这样
 
-![avator](../../pic/progit-merge-hotfix.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-merge-hotfix.png)
 
 
 `hotfix` 已经完成了它的使命，你可以将他删除了，使用 `git branch -d` 选项删除。
@@ -1272,7 +1272,7 @@ $ git branch -d hotfix
 Deleted branch hotfix (was 3a0874c).
 ```
 
-![avator](../../pic/progit-finish-del.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-finish-del.png)
 
 现在 `hotfix` 的修改内容还未包含到 `iss53` 中，你可以使用 `git merge master` 把分支合并到 `iss53`
 
@@ -1293,13 +1293,13 @@ Merge made by the 'recursive' strategy.
 
 由于当前的 `master` 并非 hotfix 的祖先，所以 Git 需要找到他们的共同祖先进行三方合并计算。
 
-![avator](../../pic/progit-find-ancestor.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-find-ancestor.png)
 
 Git 会为分支合并自动识别出最佳的同源合并点。
 
 在合并成功之后，提交记录变成这样，Git 自动创建并包含了合并结果的提交对象 C6，它比较特殊，拥有两个祖先。
 
-![avator](../../pic/progit-two-ancetors.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-two-ancetors.png)
 
 ### 遇到冲突时的分之合并
 
@@ -1379,35 +1379,35 @@ $ git branch -D testing
 
 许多使用 Git 的开发者都喜欢用这种方式来开展工作，比如仅在 master 分支中保留完全稳定的代码，即已经发布或即将发布的代码。与此同时，他们还有一个名为 develop 或 next 的平行分支，专门用于后续的开发，或仅用于稳定性测试 — 当然并不是说一定要绝对稳定，不过一旦进入某种稳定状态，便可以把它合并到 master 里。这样，在确保这些已完成的特性分支（短期分支，比如之前的 iss53 分支）能够通过所有测试，并且不会引入更多错误之后，就可以并到主干分支中，等待下一次的发布。
 
-![avator](../../pic/progit-long-branch.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-long-branch.png)
 
 使用流水线可能可以更好理解
 
-![avator](../../pic/progit-long-branch-waterflow.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-long-branch-waterflow.png)
 
 ### 特性分支
 
 在任何规模的项目中都可以使用特性（Topic）分支。一个特性分支是指一个短期的，用来实现单一特性或与其相关工作的分支。可能你在以前的版本控制系统里从未做过类似这样的事情，因为通常创建与合并分支消耗太大。然而在 Git 中，一天之内建立、使用、合并再删除多个分支是常见的事。
 
-![avator](../../pic/progit-topic-branch.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-topic-branch.png)
 
 ## 远程分支
 
 远程分支存储在远程仓库中，一般使用 (`远程仓库名/分支名`)这样的形式表示远程分支。
 当你进行克隆的时候，默认把远程仓库的 `master` 分支和你本地 ``master` 分支关联。
 
-![avator](../../pic/progit-git-clone.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-git-clone.png)
 
 可以使用 `git fetch origin` 来同步远程服务器上的数据到本地。
 
-![avator](../../pic/progit-git-fecth-origin.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-git-fecth-origin.png)
 
 ### 推送本地分支
 
 如果你需要有一个分支和他人一起开发，可以运行 `git push (远程仓库名)（分支名）`
 
 ```
-$ 
+$
 Counting objects: 20, done.git push origin serverfix
 Compressing objects: 100% (14/14), done.
 Writing objects: 100% (15/15), 1.74 KiB, done.
@@ -1415,7 +1415,7 @@ Total 15 (delta 5), reused 0 (delta 0)
 To git@github.com:schacon/simplegit.git
  * [new branch]      serverfix -> serverfix
 ```
-实际上这里走了一点捷径，Git 自动吧 `serverfix` 分支名扩展为 
+实际上这里走了一点捷径，Git 自动吧 `serverfix` 分支名扩展为
 `ref/heads/serverfix:refs/heads/serverfix`，意为“取出我本地的 serverfix 分支，推送到远程仓库的 serverfix 分支中去”。
 
 你也可以使用 `git push origin serverfix:serverfix` 来实现相同效果，意为“上传我本地的 serverfix 分支到远程仓库中，仍叫他 serverfix 分支”。因此，如果你想把远程分支叫做 `awesomebranch` 可以使用 `git push origin serverfix:aswesomebranch` 来推送数据。
@@ -1483,11 +1483,11 @@ git push origin :serverfix
 
 当我们有俩个不同分支时
 
-![avator](../../pic/progit-reabase-show.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-reabase-show.png)
 
 最容易的整合方式是 `merge`，他会把两个分支最新的快照以及二者的共同祖先进行三方合并，产生一个新的提交对象（C5）
 
-![avator](../../pic/progit-rebase-merge.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-rebase-merge.png)
 
 其实还有另一种选择，你把在 C3 里的变化补丁在 C4 的基础上重新再打一遍，这就叫做 衍合（rebase），这样可以把一个分支里的提交改变移到另一个分支里重放一遍。
 
@@ -1501,7 +1501,7 @@ Applying: added staged command
 
 其原理的回到两个分支的共同祖先，根据需要衍合的分支生成一系列补丁，然后以基地分支最后一个提交对象为新出发点，逐个应用之前准备好的补丁，最后生成一个新的合并提交对象 C3，改写 `experiment` 的提交记录，使它成为 `master` 的直接下游。
 
-![avator](../../pic/progit-show-rebase.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-show-rebase.png)
 
 衍合的目的可以让远程仓库拥有一个比较整洁的提交历史
 
@@ -1509,7 +1509,7 @@ Applying: added staged command
 
 衍合也可以放到其他分支进行，并不一定非得根据分化之前的分支。
 
-![avator](../../pic/progit-client-server.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-client-server.png)
 
 你想把 client 分支合并会主分支，但是 server 分支还有待测试，那么你可以通过 `git rebase` 的 `--onto` 指定基底分支 `master`。
 
@@ -1519,7 +1519,7 @@ $ git rebase --onto master server client
 
 这好比再说 “取出 client 分支，找出 server 和 client 分支共同祖先之后的变化，把他们在 master 重现一遍”。
 
-![avator](../../pic/progit-rebase-client.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-rebase-client.png)
 
 现在只需要快进 `master` 分支即可
 ```
@@ -1527,7 +1527,7 @@ $ git checkout master
 $ git merge client
 ```
 
-![avator](../../pic/progit-fast-master.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-fast-master.png)
 
 
 现在决定把 `server` 分支的变化也包含进来，我们可以直接把 `server` 分支衍合到 `master`，而不用手动切换到 `server` 再继续衍合，`git rebase [主分支] [特性分支]`会先取出特性分支，在主分支上重演。
@@ -1535,7 +1535,7 @@ $ git merge client
 $ git rebase master server
 ```
 
-![avator](../../pic/progit-rebase-server.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-rebase-server.png)
 
 然后就可以快进 `master`，再删除 `client` 和 `server` 分支。
 
@@ -1678,7 +1678,7 @@ $sudo vim /etc/passwd
 git:x:1000:1000::/home/git:/bin/sh
 ```
 
-把 `bin/sh` 改成 `/user/bin/git-shell` 或者使用 `which git-shell` 
+把 `bin/sh` 改成 `/user/bin/git-shell` 或者使用 `which git-shell`
 ```
 git:x:1000:1000::/home/git:/usr/bin/git-shell
 ```
@@ -1809,7 +1809,7 @@ Date:   Wed Dec 10 22:22:03 2008 +0000
 #### 双点
 主要让 Git 区分出可以从一个分支中获得而不能从另一个分支中获得的提交。例如你有如下提交历史。
 
-![avator](../../pic/progit-doubleclick.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-doubleclick.png)
 
 您可以使用 `master..experiment` 来让 Git 显示这些提交的日志。这句话的意思就是“所有可以从 exeriment 分支中获得而不能从 master 分支中获得的提交”
 
@@ -2532,7 +2532,7 @@ index 88839c4..4afcb7c 100644
 当你运行 `git am` 命令时，会调用它们，`git format-patch` 简而言之是用来补丁的。
 
 + applypatch-msg 挂钩: 接受一个参数，包含被建议提交信息的临时文件名，如果该脚本非正常退出，Git 会放弃该补丁。可以用这个脚本确认信息是否被格式化正确。
-+ pre-applypatch 挂钩:不接收参数，在补丁运用之后运行，可以用来在提交前检查快照，进行测试等等。 
++ pre-applypatch 挂钩:不接收参数，在补丁运用之后运行，可以用来在提交前检查快照，进行测试等等。
 + post-applypatch 挂钩: 用其进行通知，但无法阻止打补丁过程。
 
 #### 其他客户端挂钩
@@ -2549,7 +2549,7 @@ index 88839c4..4afcb7c 100644
 
 从标准输出（stdin）获得被推送引用的列表，如果其返回值不是 0，则所有推送内容都不被接受。
 
-#### post-receive: 
+#### post-receive:
 过程完结后，可以用来更新其他系统服务或者通知用户，接受和 `pre-receive` 相同的标准输入数据。可以使用它来分析提交信息等。
 
 #### update
@@ -2646,7 +2646,7 @@ $ git cat-file -p d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 $ git cat-file -t d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 tree
 ```
-![avator](../../pic/progit-tree-in-tree.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-tree-in-tree.png)
 
 ### commit对象
 
@@ -2705,7 +2705,7 @@ $ find .git/objects -type f
 .git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1
 ```
 
-![avator](../../pic/progit-history-by-plumb.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-history-by-plumb.png)
 
 ### 对象存储
 
@@ -2747,7 +2747,7 @@ cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 ```
 
-![avator](../../pic/progit-use-refs.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/progit-use-refs.png)
 
 当你在执行 `git branch （分支名称）` 这样的命令,Git 基本上就是执行了 `update-ref` 命令，把你最后一次提交的 SHA-1 值，添加到你要创建的分支的引用。
 
@@ -2801,7 +2801,7 @@ $ git remote add origin @gite...
 相当于在 `.git/config` 加上了一节
 
 ```
-url = 
+url =
 fetch + = refs/heads/*:refs/remotes/origin/*:
 ```
 

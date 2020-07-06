@@ -11,7 +11,7 @@
 
 **必须** 将 ipa.plist 部署到 https 服务器中，
 
-![avator](../../pic/ipa-plist.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/ipa-plist.jpg)
 
 + url: ipa 放置位置
 + bundle-identifier: 对应 APP 的 bundle-identifier

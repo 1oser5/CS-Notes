@@ -13,13 +13,13 @@
 
 选择对应用户，点击设置，然后将其 API Token 保存下来（只会显示一次，所以一定要记得保存）。
 
-![avator](../../pic/jenkins-user-token-config.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins-user-token-config.jpg)
 
 ### 项目配置
 
 在对应的项目，`构建触发器` 部分勾选 `触发远程构建`，再讲之前生成的 token 写入。
 
-![avator](../../pic/jenkins-build-remote-trigger.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins-build-remote-trigger.jpg)
 
 在输入 token 下发有对应的 url 提示，其 url 地址格式应该为 `JENKINS_URL/job/test/build?token=TOKEN_NAME` 或者 ` /buildWithParameters?token=TOKEN_NAME`，同时你可以使用添加额外参数 `cause` 来描述构筑原因， `&cause=Cause+Text`。
 
@@ -34,7 +34,7 @@
 
 在jenkins 的Configure Global Security下 , 取消“防止跨站点请求伪造（Prevent Cross Site Request Forgery exploits）”的勾选。
 
-![avator](../../pic/jennkins-prevent-croess.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jennkins-prevent-croess.jpeg)
 
 
 #### 问题2

@@ -18,11 +18,11 @@ java -version
 
 到 Gradle 官网，找到下载列表
 
-![avator](../../pic/download-gradle.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/download-gradle.png)
 
 点击上图的 complete，进入下载页面，复制下载链接。
 
-![avator](../../pic/download-gradle-link.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/download-gradle-link.png)
 
 在 linux 命令行中输入
 ```
@@ -321,4 +321,4 @@ cp -r dist/*  ~/zhyl-git/v_cordova/www
 ```
 完整流程图
 
-![avator](../../pic/cordova打包apk.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/cordova打包apk.jpg)

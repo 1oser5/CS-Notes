@@ -6,4 +6,4 @@
 
 完整流程图
 
-![avator](../../pic/cordova打包ipa.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/cordova打包ipa.jpg)

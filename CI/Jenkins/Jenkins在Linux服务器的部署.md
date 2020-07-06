@@ -87,7 +87,7 @@ yum -y update
 ```
 service jenkins start
 ```
-![avator](../../pic/start-jenkins.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/start-jenkins.png)
 
 其默认端口为 8080，默认用户为 jenkins
 
@@ -120,7 +120,7 @@ firewall-cmd –zone=public –add-port=8080/tcp –permanent
 
 修改后输入地址可以看到 jenkins 正常启动
 
-![avator](../../pic/join-jenkins.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/join-jenkins.png)
 
 基本部署完成。
 
@@ -154,19 +154,19 @@ https://blog.csdn.net/boling_cavalry/article/details/78943061
 
 1.登录GitHub，进入"Settings"页面，点击左下角的"Developer settings"，如下图：
 
-![avator](../../pic/github-developer.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/github-developer.png)
 
 2.跳转到"Developer settings"页面后，点击左下角的“Personal access tokens”，如下图：
 
-![avator](../../pic/personal-access-tokens.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/personal-access-tokens.png)
 
 3.跳转到"Personal access tokens"页面后，点击右上角的"Generate new token"按钮，如下图：
 
-![avator](../../pic/generate-new-token.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/generate-new-token.png)
 
 4.可能会提示输入GitHub密码，输入后跳转到创建token的页面，如下图所示，输入title，再勾选"repo"和"admin:repo_hook"，再点击底部的"Generate token"按钮，就能产生一个新的access token，将此字符串复制下来，后面jenkins任务中会用到
 
-![avator](../../pic/new-access-token.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/new-access-token.png)
 
 
 ### webhook地址
@@ -179,11 +179,11 @@ webhook 是通知 Jenkins 时的请求地址，用来写在 GitHub 上，GitHub 
 
 2.在工程主页面点击右上角的"Settings"，再点击左侧"Webhooks"，然后点击“Add webhook”，如下图：
 
-![avator](../../pic/add-webhooks.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/add-webhooks.jpeg)
 
 3.如下图，在"Payload URL"位置填入webhook地址，再点击底部的"Add webhook按钮"，这样就完成webhook配置了，今后当前工程有代码提交，GitHub就会向此webhook地址发请求，通知Jenkins构建：
 
-![avator](../../pic/set-webhook.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/set-webhook.jpeg)
 
 ## Jenkins 设置
 
@@ -193,15 +193,15 @@ webhook 是通知 Jenkins 时的请求地址，用来写在 GitHub 上，GitHub 
 
 3.在系统设置页面找到"GitHub"，配置一个"GitHub Server"，如下图，“API URL"填写"https://api.github.com”，“Credentials"位置如下图红框所示，选择"Add->Jenkins”
 
-![avator](../../pic/set-github.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/set-github.jpeg)
 
 4.弹出的页面中，“Kind"选择"Secret text”，"Secret"填入前面在GitHub上生成的Personal access tokens，Description随便写一些描述信息，如下图：
 
-![avator](../../pic/add-credential.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/add-credential.jpeg)
 
 5.填写完毕后，点击右侧的"Test connection"按钮，如果信息没有填错，显示的内容如下图所示：
 
-![avator](../../pic/test-conn.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/test-conn.jpeg)
 
 6.点击页面最底部的"保存"按钮
 

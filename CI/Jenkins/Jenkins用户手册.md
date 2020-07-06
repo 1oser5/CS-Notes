@@ -395,7 +395,7 @@ pipeline{
 
 ```groovy
 stage('Back-end'){
-    
+
 }
 stage('Front-end'){
 
@@ -449,7 +449,7 @@ node {
 
 在进行 git 绑定的时候遇到了以下问题
 
-![avator](../../pic/link-git.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/link-git.png)
 
 发现仓库 url 只能使用线上地址
 
@@ -459,7 +459,7 @@ node {
 
 现在回到 docker 环境，发现现在无法登陆了，点击登录输入账密之后出现如下：
 
-![avator](../../pic/jenkins-login-error.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins-login-error.png)
 
 感觉应该是我之前修改过 jenkins 用户配置文件造成的，重启镜像也无法解决该问题。
 
@@ -468,11 +468,11 @@ node {
 
 尝试过删除镜像来重置 jenkins 配置，但是无效，原因是在新建 jenkins 时，是挂载到本地的
 ```python
-docker run 
---rm 
--u root 
--p 8080:8080 
--v jenkins-data:/var/jenkins_home 
+docker run
+--rm
+-u root
+-p 8080:8080
+-v jenkins-data:/var/jenkins_home
 # 下面这一行
 -v /var/run/docker.sock:/var/run/docker.sock
 -v "%HOMEPATH%"/home:/home jenkins

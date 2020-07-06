@@ -35,7 +35,7 @@
 
 ## 运行 Jenkins
 
-到指定目录运行 
+到指定目录运行
 
 ```
 java -jar /Applications/Jenkins/jenkins.war
@@ -90,7 +90,7 @@ pipeline{
                 retry(3){
                     sh './flakey-deploy.sh'
                 }
-                
+
                 timeout(time: 3, unit: 'MINUTES'){
                     sh './health-check.sh'
                 }
@@ -116,7 +116,7 @@ pipeline{
                 retry(3){
                     sh './flakey-deploy.sh'
                 }
-                
+
                 timeout(time: 3, unit: 'MINUTES'){
                     sh './health-check.sh'
                 }
@@ -270,13 +270,13 @@ docker 中的 jenkins 和一般的不同，你在普通命令行中看不到密�
 docker ps -a
 ```
 结果如下：
-![avator](../../pic/dockerid.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/dockerid.png)
 红色标出的是对于的 ID 号。
 之后获得相应 ID 的权限
 ```python
 docker exec -u 0 -it 21ee4816aac1 /bin/bash
 ```
-![avator](../../pic/docker&#32;exec.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/docker&#32;exec.png)
 -u 0 意味着是根权限。 -it 后面的根据你需要获取那个 ID 权限有关，对应即可。
 
 最后在使用常规命令就可以得到密钥
@@ -289,7 +289,7 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 
 可以通过修改 jenkins_home 中的 config.xml 来进行密码 reset
 
-首先找到对应的 docker 容器，在进入 jenkins_home 文件夹，使用 vim 编辑器进行 config.xml 
+首先找到对应的 docker 容器，在进入 jenkins_home 文件夹，使用 vim 编辑器进行 config.xml
 
 将
 \<useSecurity>true\</useSecurity>  修改成  \<useSecurity>false\</useSecurity>即可，刷新网页，可以看到直接跳过登陆界面，进入 jenkins 主界面。
@@ -306,7 +306,7 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 
          c. 在User/group表格中，给admin选择所有权限。
 
-![avator](../../pic/jenkins_pwd.jpeg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins_pwd.jpeg)
 
 介于上述问题，以后所有 jenkins 的账密都设置为 ：
 

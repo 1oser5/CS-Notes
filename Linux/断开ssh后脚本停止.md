@@ -29,7 +29,7 @@ nohup python my.py >> /usr/local/python/xxf/my.log 2>&1 &
 
 在你运行起来之后会给你一个进程号
 
-![avator](../../pic/outhup进程号.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/outhup进程号.jpg)
 
 ### 查看运行进程
 

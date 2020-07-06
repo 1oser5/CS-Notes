@@ -19,7 +19,7 @@ Jenkins 配置中需要将 master 的密钥添加到 slave 机器，使得其可
 ## 创建 node
 在 jenkins 中选择节点管理，新增一个节点
 
-![avator](../../pic/node-windows-config.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/node-windows-config.jpg)
 
 网上说的 Launch agent via Java Web start 和 Launch agent bt connecting it to master 是一样的。
 
@@ -31,7 +31,7 @@ Jenkins 配置中需要将 master 的密钥添加到 slave 机器，使得其可
 
 如果没有 `Launch agent by connecting it to the master` 的启动方式，则需要在 `全局安全设置` 中的 `代理` 部分，将代理协议都勾选上
 
-![avator](../../pic/jenkins-slave-agent.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins-slave-agent.jpg)
 
 下载jar之后双击打开，但是没法连接，提示报错为
 ```

@@ -102,7 +102,7 @@
 + 多指令，单数据（MISD）
 + 多指令，多数据（MIMD）
 
-![avator](../../pic/flynn.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/flynn.png)
 
 这种分类方法叫做 **菲林分类**
 
@@ -117,7 +117,7 @@
 
 当 Execute 阶段完成之后，CPU 回到步骤1准备执行下一个时钟循环。
 
-![avator](../../pic/SISD-schema.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/SISD-schema.png)
 
 运行在这些计算机上的算法是顺序执行的（连续的），不存在任何并行。只有一个 CPU 的硬件系统就是 SISD 的例子。
 
@@ -125,11 +125,11 @@
 + 中心内存单元：存储指令和数据
 + CPU：用于从内存单元获得指令/数据，对指令解码并顺序执行它们
 + I/O 系统：程序的输入和输出
-  
+
 ### 2.MISD
 这种模型下，有 n 个处理器，每一个都有自己的控制单元，共享一个内存单元。在每一个 CPU 时钟中，从内存获取的数据会被所有的处理器同时处理，每一个处理器按照自己的控制单元发送的指令处理。在这种情况下，并行实际上是指令层面的并行，多个指令在相同的数据上操作。能够合理利用的情况比较少，例如数据加密等。
 
-![avator](../../pic/MISD.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/MISD.png)
 
 ### 3.SIMD
 SIMD 计算机包括多个独立的处理器，每个都有自己的局部内存，用来存放数据。所有处理器在单一指令流下工作。所有的处理器同时处理每一步，在不同的数据上执行相同的指令，这是一个数据并行的例子。SIMD 架构比 MISD 架构要实用的多，这种架构的算法十分容易设计，分析和实现。限制是只有可以被分解为多个小问题的问题才能被这种架构解决。
@@ -137,7 +137,7 @@ SIMD 计算机包括多个独立的处理器，每个都有自己的局部内存
 ### 4.MIMD
 在菲林分类中，这种计算机是最广泛应用的、也是最强大的种类。这种架构有 n 个处理器， n 个指令流，n 个数据流。每个处理器都有自己的控制单元和局部内存。每个处理器在独立的控制单元分配的指令流下工作。因此，处理器可以在不同的数据上运行不同的程序，这样可以解决完全不同的子问题甚至是单一的大问题。在 MIMD 中，架构是通过线程或者进程层面的并行实现的，这也意味着处理器一般是异步工作的。
 
-![avator](../../pic/MIMD.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/MIMD.png)
 
 
 ## 内存管理
@@ -155,7 +155,7 @@ SIMD 计算机包括多个独立的处理器，每个都有自己的局部内存
 
 当一个处理器修改了内存中的数据，同时另一个处理器正在使用该数据，就会出现一致性的问题。
 
-![avator](../../pic/Page-8-Image-1.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Page-8-Image-1.png)
 
 
 共享内存系统的主要特性如下：
@@ -175,7 +175,7 @@ SIMD 计算机包括多个独立的处理器，每个都有自己的局部内存
 ### 2.分布式内存
 分布式内存系统中，各个处理器都有其各自的内存，而每个处理器只能处理属于自己的内存。
 
-![avator](../../pic/Page-10-Image-1.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Page-10-Image-1.png)
 
 内存管理方式有几个好处：
 
@@ -186,8 +186,8 @@ SIMD 计算机包括多个独立的处理器，每个都有自己的局部内存
 最大缺点是，难以实现信息的通信。如果一个处理器需要处理其他处理器的数据，这两个处理器必须通过信息传递协议来交换信息，但这样会导致通信速度下降。原因有二：
 
 + 从一个处理器创建和发送信息到另一个处理器需要时间；
-+ 任何处理器都需要停止工作，处理来自其他处理器的讯息。 
-  
++ 任何处理器都需要停止工作，处理来自其他处理器的讯息。
+
 
 分布式内存系统的特性如下：
 + 内存通常分布在不同的处理器中，局部内存只能由对应的处理器访问；
@@ -218,7 +218,7 @@ CPU 和 GPU 不仅可以通过高速总线通讯，也可以通过一块虚拟�
 
 在这种架构中，应用程序可以在单一的地址空间中创建数据结构，然后将任务分配给合适的硬件执行。通过原子性操作，多个任务可以安全地操控同一个内存区域同时避免数据一致性问题。
 
-![avator](../../pic/Page-13-Image-1.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Page-13-Image-1.png)
 
 
 ## 并行编程模型
@@ -249,12 +249,12 @@ intel 的超线程（Hyper-threading）技术则是在硬件层面上实现多�
 ### 3.消息传递模型
 信息传递模型通常在分布式内存系统中应用。任务可以驻留在一台或者多台的物理机器上。程序员需要确定并行和通过信息产生的数据交换。
 
-![avator](../../pic/Page-15-Image-1.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Page-15-Image-1.png)
 
 ### 4.数据并行模型
 该模型中，多个任务操作同一数据结构。每个任务执行数据的不同部分。在共享内存架构中，所有任务都访问同一内存。在分布式内存架构中，贼会将数据分割并且保存到每个任务的局部内存中。为了实现该模型，程序需要指定数据的分隔和对齐方式。GPU 在数据对齐的情况下效率很高。
 
-![avator](../../pic/Page-16-Image-1.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Page-16-Image-1.png)
 
 
 ## 如何设计一个并行程序
@@ -271,7 +271,7 @@ intel 的超线程（Hyper-threading）技术则是在硬件层面上实现多�
 
 + 按范围分解（Domain decomposition）：使用该处理方法，按同一个程序处理不同数据，一般适用于海量数据情况。
 + 按功能分解（Functional decomposition）：将问题分解为几个任务，每个任务对数据执行不同操作。
-  
+
 ### 2.任务分配
 该阶段会向各个处理器分配任务，最关键的是负载均衡，以保证没有处理器长时间闲置，浪费资源。为了实现该效果，程序员需要考虑异构的可能性，其可以将任务分配给相对更适合的处理器。在分配任务是要注意减少处理器间的通讯，处理器的通讯是资源消耗和程序变慢的源头。
 
@@ -418,7 +418,7 @@ threading.currentThread().getName()
 
 但实际过程中，这个方法经常导致一种糟糕的死锁。当不同线程要求得到同一个锁时，死锁就会发生。程序无法进行，因为他们拿着各自的锁。
 
-![avator](../../../../pic/deadlock.png)
+![avator](../../https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/deadlock.png)
 
 
 # 使用 RLock 进行线程同步
@@ -438,21 +438,21 @@ RLock（Reentrant Lock）就是可以获取多次的锁，也叫做递归锁。�
 + 每当有线程想要使用该共享资源时，调用 acquire()，此操作减少信号量的内部变量，如果该值大于零，则分配该资源权限。如果小于零，则线程被挂起，直到有其他线程释放该资源。
 + 当线程不需要该共享资源，必须通过release（）释放。这是信号量的内部变量增加，在信号量等待队列中排在最前面的线程会拿到共享资源的权限。
 
-![avator](../../../../pic/semaphores.png)
+![avator](../../https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/semaphores.png)
 
 # 使用条件进行线程同步
 
-![avator](../../../../pic/python-condition.png)
+![avator](../../https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/python-condition.png)
 
 Python对条件同步的管理很有趣，如果没有已经存在的锁传递给构造器的话，内部的 _Condition 会创建一个 RLock（）对象
 
-![avator](../../pic/Snipaste_2019-10-14_10-49-01.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Snipaste_2019-10-14_10-49-01.png)
 
 # 使用事件进行线程同步
 
 事件是线程之间用于通信的对象。有的线程等待信号，有点线程发出信号。基本上事件对象会维护一个变量。使用 set（）时将变量设置为 ture，使用clear（）时将变量设置为 false。wait（）方法会阻塞线程，直至他变为 true。
 
-![avator](../../pic/event.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/event.png)
 
 
 # 使用with语法
@@ -497,7 +497,7 @@ mulitprocess 通过以下几步创建进程：
 + 创建进程对象
 + 调用 start（）方法，开启进程的活动
 + 调用 join（）方法，在进程结束之前一直等待
-  
+
 
 ## 如何在后台运行一个进程
 
@@ -518,7 +518,7 @@ back_process.daemon = True
 + ==0：没有错误政策退出
 + \> 0：进程有错误，并以此状态码退出
 + <0：进程被 '-1*' 的信号杀死并且以 ExitCode 退出
-  
+
 比如例子用， ExitCode 为 15，表示负数被子进程 15 的信号杀死。
 
 ## 如何在子类中使用进程
@@ -532,7 +532,7 @@ back_process.daemon = True
 
 并行应用常常要在进程之间交换数据，Multiporcess 有两个 Communication Channel 可以交换对象： 队列（queue） 和 管道(pipe)
 
-![avator](../../pic/communication-channel.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/communication-channel.png)
 
 Queue 返回一个共享的队列，是线程安全也是进程安全的。可以序列的对象都能通过其进行交换。
 
@@ -541,7 +541,7 @@ Queue 返回一个共享的队列，是线程安全也是进程安全的。可�
 
 + task_done()：此方法意味着之前入队的一个任务被完成
 + join（）：此方法将进程阻塞，知道所有 item 被取出执行
-  
+
 
   注释：因为使用队列进程是一个单向的，不确定过程，使用 task_done()可以表示一个任务已经被完成了。
 
@@ -569,7 +569,7 @@ Queue 返回一个共享的队列，是线程安全也是进程安全的。可�
 
 下图展示了 barrier 如何进行同步：
 
-![avator](../../pic/barrier.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/barrier.png)
 
 
 ## 如何在进程之间管理状态
@@ -597,7 +597,7 @@ Python 多进程模块提供了一个在所有用户之间管理共享对信息�
 
 在并发执行的异步模型中，许多任务穿插在同一时间线上，所有任务都有一个控制流执行（单线程），任务可能被暂停或恢复，中间这短时间线程会执行其他任务。
 
-![avator](../../pic/asynchronous-programming-model.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/asynchronous-programming-model.png)
 
 异步编程和多线程不同的是，多线程是由操作系统决定何时挂起某个活动或恢复某个活动的，而异步并发模型中，程序员必须假设线程在何时都有可能被挂起或者执行。
 
@@ -619,7 +619,7 @@ Executor 是抽象类，可以通过子类访问，比如 executorPools，因此
 
 进程池和线程池出现优化/简化了程序进程和线程的调用。通过池，可以将任务给 executor 调用。池分为两部分，一部分是待执行的任务，另一部分是一系列的进程和线程。使用进程池的主要目的是在于重用，让进程或线程在生命周期内被多次调用。其减少了创建线程和进程的开销，提高了程序的性能。重用虽然不是规定的，但是它是池出现的主要原因。
 
-![avator](../../pic/pooling-management.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/pooling-management.png)
 
 
 current.Futures 提供了两个类分别操作线程池和进程池，这两类分别是：
@@ -711,7 +711,7 @@ celery 是一个用来管理分布式任务的 Python 框架。其遵循面向�
 +  celery 模块
 +  一个信息代理（Message Broker）：这是一个独立于 celery 的中间件。用来和分布式 worker 收发消息。它会处理网络通信中的信息交换。不再是点对点的，而是面向消息的方式，最著名的是 发布者/订阅者 模式。
 
-![avator](../../pic/celery-diagram.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/celery-diagram.png)
 
 使用 RabbitMQ 来做信息代理，这是一个面向信息的中间件，实现了 高级信息队列协议（AMQP）。RabbitMQ 是基于 Erlang 写的。基于 Open Telecom Platform（OPT）框架来管理集群和故障转移。
 
@@ -739,7 +739,7 @@ task.apply_async(args = [arg1, arg 2], kwargs = {'kwarg1':'x','kwarg2':'y'})
 ## 使用 SCOOP 进行科学计算
 Scalable Concurrent Operations in Python(SCOOP) 是一个可扩展的 Python 并行计算库，可以将并行任务放到各种各样的计算节点上计算。其基于 ØMQ 框架，提供了一种在分布式系统中管理 Futures 的方法。主要应用场景是科学计算，尽可能利用所有的计算资源来执行大量的分布式任务。
 
-![avator](../../pic/SCOOP.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/SCOOP.png)
 
 该系统的通讯中心是 broker，broker 和所有节点通讯，在他们之间传递信息呢。 Future 在各节点被创建，而不是由 broker 创建，这种方案是的拓扑结构更加可靠，性能高。 broker占用的主要资源是 I/O，CPU 使用很小。
 
@@ -759,7 +759,7 @@ Python Remote Objects（Pyro4）实现了类似于 java 的远程方法调用（
 
 从概念角度讲，RMI 技术可以追溯到远程过程调用（remote procedure call,RPC）。RMI 是 RPC 针对面向对象范式进行改造 -- 方法替换过程。在面向对象系统中，远程方法调用使用这样一种机制使得项目在统一性和对称性上有很多优势，能复用不同方法或者对象之间的模型。
 
-![avator](../../pic/RMI.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/RMI.png)
 
 从图中看书 ，Pyro4 用 客户端/服务端的方式来管理和分发对象。Pyro4 可以将客户端转化为远程对象调用。在调用中有两个重要角色，一个是客户端，一个是服务客户端的服务器，Pyro4 以分布式的形式提供这种服务。
 
@@ -767,7 +767,7 @@ Python Remote Objects（Pyro4）实现了类似于 java 的远程方法调用（
 
 展示使用 Pyro4 创建的互相调用的对象链来实现以下的分布式框架
 
-![avator](../../pic/chainning.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/chainning.png)
 
 ## PyCSP 和通信顺序进程
 
@@ -798,7 +798,7 @@ PyCSP 的特点是：
 
 每个 GPU 由多个流式处理器 （Steaming Multiprocessor，SM），其代表并行的第一层逻辑级别。每个 SM 都是独立工作的。
 
-![avator](../../pic/gpu-architecture.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/gpu-architecture.png)
 
 每个 SM 又被分为一组 流处理器（Stream Process，SP）。每个 SP 都有一个可执行的核心，可以运行一个线程。SP 是最小的逻辑执行单位，表示更精确的并行度。一组中所有核心运行统一指令，属于 SIMD 模型。
 

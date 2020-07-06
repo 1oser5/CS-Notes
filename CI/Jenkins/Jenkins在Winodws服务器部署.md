@@ -1,6 +1,6 @@
 mac 可以直接使用 Microsoft Remote Desktop for Mac 来远程控制 Windows 界面。
 
-![avator](../../pic/win-server-conn.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/win-server-conn.png)
 
 打开命令行输入
 ```
@@ -14,7 +14,7 @@ windows 服务器方便就方便在有 GUI，直接打开浏览器去下载 java
 
 百度是可以正常使用，但是发现 oracle 官网打不开，问题如下：
 
-![avator](../../pic/win-server-unable-open-page.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/win-server-unable-open-page.png)
 
 
 1.搜索输入 运行，然后输入 inetcpl.cpl
@@ -34,7 +34,7 @@ windows 服务器方便就方便在有 GUI，直接打开浏览器去下载 java
 ```
 systeminfo
 ```
-![avator](../../pic/win-server-check-type.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/win-server-check-type.png)
 
 去官网下载相应的下载包
 

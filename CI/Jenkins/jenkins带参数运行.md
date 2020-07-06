@@ -9,7 +9,7 @@
 
 使用该插件可以实现让用户选择参数，并且能在构筑时使用对应变量，这点很重要，因为这样才能反馈用户的输出。
 
-![avator](../../pic/Extended-Choice-Param.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/Extended-Choice-Param.jpg)
 
 + Name : 对应的变量名
 + Description : 描述
@@ -18,19 +18,19 @@
 + Delimiter : 分隔符，下文会用到
 
 
-![avator](../../pic/extended-choose-value.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/extended-choose-value.jpg)
 
 + Value : 对应上文的数量和分隔符的变量列表
 + Default Value : 默认值
 
-![avator](../../pic/extended-des.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/extended-des.jpg)
 
 Description : 给用户显示的名字
 
-![avator](../../pic/jenkins-excute-shell.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins-excute-shell.jpg)
 
 可以在后续构筑中只有引用变量
 
 最终效果还是很高大上的 😂
 
-![avator](../../pic/jenkins-param-show.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/jenkins-param-show.jpg)

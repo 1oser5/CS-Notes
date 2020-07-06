@@ -22,7 +22,7 @@ brew cask install java
 brew search java
 ```
 
-![avator](../../pic/homebrew-java-list.png)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/homebrew-java-list.png)
 
 可以看到只有一个 java 是和 JDK 相关的，但目前还是没法选择下载版本。
 #### Homebrew 获取默认版本库
@@ -141,4 +141,4 @@ $ ./gradlew assembleRelease
 
 完整流程图
 
-![avator](../../pic/React-native打包apk.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/React-native打包apk.jpg)

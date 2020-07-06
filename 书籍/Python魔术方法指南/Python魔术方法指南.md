@@ -134,7 +134,7 @@ class Student(object):
     def __del__(self, name):
         #相同的递归错误
        del self['name']
-    
+
     ## 正确的用法
     def __setattr__(self, name):
         # 定制特有属性
@@ -302,4 +302,4 @@ pickle 并不是很完美，其比较容易损坏，但是他比文件稍微安�
 
 Magic Methods
 
-![avator](../../pic/python-magic-method.jpg)
+![avator](https://raw.githubusercontent.com/1oser5/CS-Notes/master/pic/python-magic-method.jpg)
