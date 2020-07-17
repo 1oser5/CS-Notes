@@ -6,7 +6,8 @@
 # 🐍 Python
 + [Python常见问题](./Python/Python常见问题.md)
 + [脚本](./Python/脚本)
-
+# 😎 Java
++ [java入门](./Java/Java入门.md)
 # 👮 CI
 + [Jenkins](./CI/Jenkins)
 + [pack](./CI/pack)
