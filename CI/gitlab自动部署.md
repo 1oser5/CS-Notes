@@ -141,3 +141,15 @@ deploy_staging:
 ## 项目部署
 
 在 GitLab 网页对应位置 管理中心->Runner 将项目添加至 Runner，之后在 push 后就可以自动触发了。
+
+
+## jar包自动发布
+
+### 依赖
+
+如果直接使用 `mvn` 会报错，需要在对应的 git-runner 容器中配置好 maven 和 jdk
+
+公司服务器的情况有点奇怪，需要 jar 包运行在宿主上，但是gitlab-runner是跑在容器上的，所以要将打包结果传输到宿主上
+
+可以通过 scp 命令进行命令的传输，通过 ssh 命令来执行脚本
+
